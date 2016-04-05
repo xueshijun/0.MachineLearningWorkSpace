@@ -13,6 +13,10 @@
 优 点 ：简化数据，去除嗓声，提高算法的结果。
 缺 点 ：数据的转换可能难以理解。
 适用数据类型：数值型数据。
+SVD是一种强大的降维工具，我们可以利用SVD来逼近矩阵并从中提取重要特征。
+通过保留矩阵80%~90%的能量，就可以得到重要的特征并去掉噪声
+
+推荐引擎将物品推荐给用户，协同过滤则是一种基于用户喜好或行为数据的推荐的实现方
 
 SVD应用:信息检索：
     利用SVD的方法为隐性语义索引(Latent Semantic Indexing, LSI) 或隐性语义分析(LatentSemanticAnalysis, LSA)。
@@ -27,7 +31,7 @@ SVD应用:推荐系统
     更先进的方法则先利用SVD从数据中构建一个主题空间,然后再在该空间下计算其相似度。 
 '''
 
-from numpy import *
+import numpy as np
 U,Sigma,VT=np.linalg.svd([[1,1],[1,7]])
 print U
 print Sigma #仅返回对角元素
@@ -42,10 +46,10 @@ def loadExData():
             [0,0,0,3,3],
             [0,0,0,1,1]]
 
-Data=mat(loadExData())
-U,Sigma,VT=linalg.svd(Data)
+Data=np.mat(loadExData())
+U,Sigma,VT=np.linalg.svd(Data)
 #用如下结果来近似原始数据集
-Sig3 = mat([[Sigma[0],0,0],[0,Sigma[1],0],[0,0,Sigma[2]]])
+Sig3 = np.mat([[Sigma[0],0,0],[0,Sigma[1],0],[0,0,Sigma[2]]])
 print U[:,:3] * Sig3*VT[:3,:]
 
 '''
@@ -58,18 +62,18 @@ print U[:,:3] * Sig3*VT[:3,:]
 '''
 
 def ecludSim(inA,inB):
-    return 1.0/(1.0 + linalg.norm(inA - inB))
+    return 1.0/(1.0 + np.linalg.norm(inA - inB))
 #该方法相对于欧氏距离的一个优势在于，它对用户评级的量级并不敏感。
 def pearsSim(inA,inB):
     if len(inA) < 3 : return 1.0
-    return 0.5+0.5*corrcoef(inA, inB, rowvar = 0)[0][1]
+    return 0.5+0.5*np.corrcoef(inA, inB, rowvar = 0)[0][1]
 #如果夹角为90度,则相似度为0;如果两个向量的方向相同,则相似度为1.0。
 def cosSim(inA,inB):
     num = float(inA.T*inB)
-    denom = linalg.norm(inA)*np.linalg.norm(inB)
+    denom = np.linalg.norm(inA)*np.linalg.norm(inB)
     return 0.5+0.5*(num/denom)
 
-myMat=mat(loadExData())
+myMat=np.mat(loadExData())
 #==============================================================================
 # ecludSim(myMat[:,],myMat[:,4])
 # ecludSim(myMat[:,],myMat[:,0])
@@ -106,14 +110,13 @@ myMat=mat(loadExData())
 '''
 #计算在给定相似度计算方法的条件下，用户对物品的估计评分值。
 def standEst(dataMat, user, item, simMeas):
-    n = shape(dataMat)[1]
     simTotal = 0.0; ratSimTotal = 0.0
-    for j in range(n):
+    for j in range(np.shape(dataMat)[1]):
         userRating = dataMat[user,j]
         #如果某个物品评分值为0 , 就意味着用户没有对该物品评分，跳过了这个物品。
         if userRating == 0: continue 
-        #寻找两个用户都评级的物品,给岀的是两个物品当中已经被评分的那个元素
-        overLap = nonzero(logical_and(dataMat[:,item].A>0,dataMat[:,j].A>0))[0]
+        #寻找两个用户都评级的物品,给岀的是两个物品当中已经被评分的那个元素  
+        overLap = np.nonzero(np.logical_and(dataMat[:,item].A>0,dataMat[:,j].A>0))[0]
         if len(overLap) == 0: similarity = 0
         else: #随后，相似度会不断累加，每次计算时还考虑相似度和当前用户评分的乘积。
             similarity = simMeas(dataMat[overLap,item],dataMat[overLap,j])
@@ -123,24 +126,6 @@ def standEst(dataMat, user, item, simMeas):
     if simTotal == 0: return 0
     #通过除以所有的评分总和，对上述相似度评分的乘积进行归一化。
     else: return ratSimTotal/simTotal 
-#产生了最高的n个推荐结果
-#相似度计算方法和估计方法
-def recommend(dataMat, user, N=3, simMeas=cosSim, estMethod=standEst):
-    #对给定的用户建立一个未评分的物品列表
-    unratedItems = nonzero(dataMat[user,:].A == 0)[1]
-    #如果不存在未评分物品，那么 就 退 出 函 数 ；
-    if len(unratedItems) == 0: return 'you rated everything'
-    itemScores = []
-    #否则，在所有的未评分物品上进行循环。
-    for item in unratedItems:
-        #对每个未评分物品,则通过调用standEst()来产生该物品的预测得分.
-        #该物品的编号和估计得分值会放在一个元素列表estimatedScore 
-        estimatedScore = estMethod(dataMat, user, simMeas, item)
-        itemScores.append((item, estimatedScore))
-    #最后按照估计得分，对该列表进行排序并返回
-    #该列表是从大到小逆序排列的，因此其第一个值就是最大值。
-    return sorted(itemScores, key=lambda jj:jj[1], reverse=True)[:N]
-
 
 
 def loadExData2():
@@ -156,22 +141,21 @@ def loadExData2():
            [0, 0, 0, 0, 5, 0, 0, 0, 0, 4, 0],
            [1, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0]]
 
-
-U,Sigma,VT=np.linalg.svd(mat(loadExData2()))
+U,Sigma,VT=np.linalg.svd(np.mat(loadExData2()))
 Sig2=Sigma**2
-print sum(Sig2)
-print sum(Sig2) * 0.9
-print sum(Sig2[:2])
-print sum(Sig2[:3])
+print 'sum(Sig2)',sum(Sig2)
+print 'sum(Sig2) * 0.9',sum(Sig2) * 0.9
+print 'sum(Sig2[:2])',sum(Sig2[:2])
+print 'sum(Sig2[:3])',sum(Sig2[:3])
 
 #基于SVD的评分估计
-def svdEst(dataMat, user, simMeas, item):
-    n = shape(dataMat)[1]
+def svdEst(dataMat, user, item, simMeas): 
     simTotal = 0.0; ratSimTotal = 0.0
-    U,Sigma,VT = la.svd(dataMat) #该函数的不同之处就在于它在第3行对数据集进行SVD分解。
-    Sig4 = mat(eye(4)*Sigma[:4]) #用这些奇异值构建出一个对角矩阵
+    U,Sigma,VT = np.linalg.svd(dataMat) #该函数的不同之处就在于它在第3行对数据集进行SVD分解。 
+    Sig4 = np.mat(np.eye(4)*Sigma[:4]) #用这些奇异值构建出一个对角矩阵 
     xformedItems = dataMat.T * U[:,:4] * Sig4.I  #用U矩阵将物品转换到低维空间中
-    for j in range(n):
+    
+    for j in range(np.shape(dataMat)[1]):
         userRating = dataMat[user,j]
         if userRating == 0 or j==item: continue
         #相似度计算是在低维空间下进行的
@@ -184,9 +168,78 @@ def svdEst(dataMat, user, simMeas, item):
     else: return ratSimTotal/simTotal
 
 
-#==============================================================================
-# recommend(myMat,2,simMeas=ecludSim)
-# #
-# recommend(myMat,2,simMeas=pearsSim)
-#==============================================================================
+#产生了最高的n个推荐结果
+#相似度计算方法和估计方法
+def recommend(dataMat, user, N=3, simMeas=cosSim, estMethod=standEst):
+    #对给定的用户建立一个未评分的物品列表
+    unratedItems = np.nonzero(dataMat[user,:].A == 0)[1]
+    #如果不存在未评分物品，那么 就 退 出 函 数 ；
+    if len(unratedItems) == 0: return 'you rated everything'
+    itemScores = []
+    #否则，在所有的未评分物品上进行循环。
+    for item in unratedItems:
+        #对每个未评分物品,则通过调用standEst()来产生该物品的预测得分.
+        #该物品的编号和估计得分值会放在一个元素列表estimatedScore  
+        estimatedScore = estMethod(dataMat, user, item, simMeas)
+        itemScores.append((item, estimatedScore))
+    #最后按照估计得分，对该列表进行排序并返回
+    #该列表是从大到小逆序排列的，因此其第一个值就是最大值。
+    return sorted(itemScores, key=lambda jj:jj[1], reverse=True)[:N]
+ 
+myMat = np.mat(loadExData())
+recommend(myMat,2)
+print '-----------svdEst1-------------'
+recommend(myMat,2,estMethod=svdEst)
+print '-----------svdEst2-------------'
+recommend(myMat,2,estMethod=svdEst, simMeas=pearsSim)
 
+
+'''
+在更大规模的数据集上,SVD分解会降低程序的速度.
+(SVD分解可以在程序调人时运行一次.在大型系统中,SVD每天运行一次或者其运行频率并不高,并且还要离线运行)
+规模扩展性的挑战性问题,比如矩阵的表示方法。
+计算资源浪费则来自于相似度得分
+在实际中，另一个普遍的做法就是离线计算并保存相似度得分。
+
+另一个问题就是如何在缺乏数据时给出好的推荐。这称为冷启动(cold-start)问题
+这个问题的另一个说法是，用户不会喜欢一个无效的物品，而用户不喜欢的物品又无效。*如果推荐只是一个可有可无的功能，那么上述问题倒也不大。但是如果应
+用的成功与否和推荐的成功与否密切相关，那么问题就变得相当严重了。
+
+冷启动问题的解决方案，就是将推荐看成是搜索问题。
+在内部表现上，不同的解决办法虽然有所不同，但是对用户而言却都是透明的。
+为了将推荐看成是搜索问题，我们可能要使用所需要推荐物品的属性。
+在餐馆菜肴的例子中,我们可以通过各种标签来标记菜肴，比如素食、美式、价格很贵等。
+同时，我们也可以将这些属性作为相似度计算所需要的数据，这被称为基于内容(content-based)的推荐。
+可能，基于内容的推荐并不如我们前面介绍的基于协同过滤的推荐效果好,但我们拥有它，这就是个良好的开始。
+
+图像压缩函数
+我们可以使用SVD来对数据降维，从而实现图像的压缩。
+
+
+'''
+
+def printMat(inMat, thresh=0.8):
+    for i in range(32):
+        for k in range(32):
+            if float(inMat[i,k]) > thresh:
+                print 1,
+            else: print 0,
+        print ''
+
+def imgCompress(numSV=3, thresh=0.8):
+    myl = []
+    for line in open('0_5.txt').readlines():
+        newRow = []
+        for i in range(32):
+            newRow.append(int(line[i]))
+        myl.append(newRow)
+    myMat = np.mat(myl)
+    print "****original matrix******"
+    printMat(myMat, thresh)
+    U,Sigma,VT = np.linalg.svd(myMat)
+    SigRecon = np.mat(np.zeros((numSV, numSV)))
+    for k in range(numSV):#construct diagonal matrix from vector
+        SigRecon[k,k] = Sigma[k]
+    reconMat = U[:,:numSV]*SigRecon*VT[:numSV,:]
+    print "****reconstructed matrix using %d singular values******" % numSV
+    printMat(reconMat,thresh)

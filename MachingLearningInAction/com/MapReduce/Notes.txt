@@ -1,0 +1,38 @@
+在Linux上用命令来测试Python语言编写的MapReduce脚本:
+cat inputFile.txt | python mapper.py | sort | python reducer.py > outputFile.txt
+
+
+dos环境
+python mpMeanMapper.py < inputFile.txt | python mpMeanReducer.py
+
+
+本地hadoop
+1.将文件复制到HDFS
+hadoop fs -copyFromLocal inputFile.txt mrmran -i
+2.启动任务
+hadoop jar $HADOOP_HOME/contrib/streaming/hadoop-2.6.0-streaming.jar 
+    -input mrmean-i 
+    -output mrmean-o 
+    -mapper "python mrMeanMapper.py" 
+    -reducer "python mrMeanReducer.py"
+3.观察结果
+hadoop fs -cat mrmean-o/part-00000
+4.下载结果
+hadoop fs -copyToLocal mrmean-o/part-00000
+
+
+□ 简单贝叶斯————它属于为数不多的可以很自然地使用MapReduce的算法。
+    在MapReduce中计算加法非常容易，而简单贝叶斯正需要统计在某个类别下某特征的概率。
+    因此可以将每个指定类别下的计算作业交由单个的mapper处理，然后使用reduCer来将结果加和。
+□kNN-近邻算法————该算法首先试图在数据集上找到相似向量，即便数据集很小，这个步骤也将花费大量的时间。
+    在海量数据下，它将极大地影响日常商业周期的运转。
+    一个提速的办法是构建树来存储数据，利用树形结构来缩小搜索范围。
+    该方法在特征数小于10的情况下效果很好。高维数据下(如文本、图像和视频) 流行的近邻查找方法是局部敏感哈希算法。
+□支持向量机(SVM)————第6章使用的Platt SMO算法在MapReduce框架下难以实现。
+    但有一些其他SVM的实现使用随机梯度下降算法求解,如Pegasos算法。
+    另外，还有一个近似的SVM算法叫做最邻近支持向量机(proximal SVM),求解更快并且易于在MapReducer框架下实现。
+□奇异值分解————Lanczos算法是一个有效的求解近似特征值的算法。
+    该算法可以应用在一系列MapReduce作业上，从而有效地找到大矩阵的奇异值。
+    另外，该算法还可以应用于主成分分析。
+□K—均值聚类————流行的分布式聚类方法叫做canopy聚类,
+    可以先调用canopy聚类法取得初始的k个簇,然后再运行K-均值聚类方法。
