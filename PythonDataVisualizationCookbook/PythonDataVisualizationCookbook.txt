@@ -1,0 +1,3618 @@
+
+
+
+大部分Linux发行版都有NumPy的软件包。我们将针对一些流行的Linux发行版给出安装步骤。
+(1) 要在Red Hat上安装NumPy，请在命令行中执行如下命令：
+	yum install python-numpy 
+(2) 要在Mandriva上安装NumPy，请在命令行中执行如下命令：
+	urpmi python-numpy 
+(3) 要在Gentoo上安装NumPy，请在命令行中执行如下命令：
+	sudo emerge numpy 
+(4) 要在Debian或Ubuntu上安装NumPy，请在命令行中执行如下命令：
+	sudo apt-get install python-numpy 
+
+各Linux发行版中相关软件包的名称以供参考。
+
+Linux发行版					NumPy				SciPy				Matplotlib				IPython
+Arch Linux				python-numpy		python-scipy		python-matplotlib			ipython
+Debian					python-numpy		python-scipy		python-matplotlib			ipython
+Fedora					numpy				python-scipy		python-matplotlib			ipython
+Gentoo					dev-python/numpy	scipy				matplotlib					ipython
+OpenSUSE				python-numpy,		python-scipy		python-matplotlib			ipython
+						python-numpy-devel
+Slackware				numpy				scipy				matplotlib					ipython
+
+
+
+
+===================================================================================================================================================
+http://my.oschina.net/quanpower/blog/206342
+编译环境
+	yum install gcc gcc-c++ autoconf automake 来安装编译环境
+	---------------------------------------------------------------------------------------------
+	安装gcc：yum install gcc 
+	安装g++： yum install gcc-c++ 
+---------------------------------------------------------------------------------------------
+在Linux CentOS 6.6上安装Python 2.7.10
+yum中最新的也是Python 2.6.6，只能下载Python 2.7.10的源代码自己编译安装。
+
+操作步骤如下：
+1）安装devtoolset
+	yum groupinstall "Development tools"
+2）安装编译Python需要的包包
+	yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel
+3）下载并解压Python 2.7.10的源代码
+	因为centos中默认python为2.6，我们希望用最新的2.7.6版本。
+	但是一定要注意centos下好多都依赖2.6，譬如yum，我们最好单独安装又不与2.6冲突	
+	cd /opt
+	wget --no-check-certificate https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tar.xz
+	tar xf Python-2.7.10.tar.xz
+	cd Python-2.7.10
+	
+	
+4）编译与安装Python 2.7.10 
+	#--with-zlib，运行python出现zip类似错误解决方法：（这里是2.7.10）
+	#编译时注意带zlib选项即可。如下：
+	./configure --prefix=/usr/local --with-zlib
+	make && make altinstall
+	
+	
+    注意:
+		运用make altinstall而不是make install,
+		这样跟系统的2.6分别在不同的路径下，也不会冲突了。
+		python2.7在/usr/local/bin下，python2.6在/usr/bin下
+	
+	
+	注意： 	安装python之前，最好确认一下gcc是否安装。yum install -y gcc
+			否则./configure 阶段就会报错了
+/*****************************************************************************
+					5）将python命令指向Python 2.7.10 
+						看版本号： 运行python，发现版本还是默认的，系统自带的2.6版本
+					 
+						更改系统默认的python： 建立软连接，使系统默认的python指向python2.7
+						正常情况下即使python2.7安装成功后，系统默认指向的python仍然是2.6版本，而yum是基于python2.6才能正常工作。所以要将系统默认的python指向到2.7版本。
+						# /usr/local/python2.7 -V    
+						#保存之前的链接
+						# mv /usr/bin/python  /usr/bin/python.bak
+						# ln -s /usr/local/python2.7.10/bin/python /usr/bin/python
+						
+					6）检查Python版本
+						# python -V
+						Python 2.7.10
+
+						运行一下python，或者：
+						# python -V
+
+					7)修正yum报错：
+						如果打yum命令，你会发现报错了。提示你可能是python版本不对。所以我们要把yum依旧指向老的python2.6版本：
+						vi /usr/bin/yum
+						在打开的文件里的头一行，也就是指定python环境的那行代码，修改成：
+						#!/usr/bin/python2.6
+						
+						
+					python第三方包的安装位置：
+					/usr/local/lib/python2.7/site-packages/  
+****************************************************************************/
+
+easy_install安装：
+	指定版本python安装
+		下载  ez_setup.py
+		https://pypi.python.org/pypi/setuptools#installation-instructions
+		[root@MASTER /usr/local/bin]python2.7  /usr/xue/Downloads/ez_setup.py
+
+	系统自带的版本安装
+		/*********************************** 
+		# yum install python-setuptools python-devel
+		***********************************/ 
+pip安装：
+	# easy_install pip 
+--------------------------------------------------------------------------------
+
+
+
+
+
+
+root权限
+6.virtualenvwrapper的安装： 
+
+/****************************************************************************************************************************************************
+																					6.3 安装virtualenv
+																							6.3.1
+																								pip install virtualenv
+																								 
+																								查看virtualenv的版本号， 或检查系统是否是否安装了virtualenv:
+																								$ virtualenv --version
+
+																							6.3.2 用virtualenv创建虚拟环境，一般虚拟环境被命名为venv:
+																								$ virtualenv venv  
+																								/***************************************************
+																									6.3.2 创建保存虚拟环境目录，并使用export导出为环境变量
+																										$ export VIRTENV=~/.virtualenvs
+																										$ mkdir -p $VIRTENV
+																								***************************************************/
+																								
+																							6.3.3 激活这个虚拟环境：（失败时产生先执行2.3.1）
+																									$ source venv/bin/activate	
+																									激活虚拟环境的命令会修改命令行提示符， 加入环境名：
+																									(venv) $
+																									--------------------------------------------
+																									假如我们要在虚拟运行环境安装django：
+																										(venv) $ pip install django
+																									验证django：
+																										(venv) $ django-admin.py --help
+																							6.3.4 当虚拟环境中的工作完成后，如果你想回到全局Python解释器中， 
+																								(venv) $ deactivate
+																							
+																							6.3.5 如果要删除一个virtualenv需要先deactivate,如下：
+																								deactivate
+																								rmvirtualenv cms  
+																								
+																									当虚拟环境中的工作完成后， 如果你想回到全局Python解释器中， 可以在命令行提示符下输入deactivate
+																									假如我们要在虚拟运行环境下安装flask框架， 执行以下命令可在虚拟环境中安装Flask
+																									(venv) $ pip install flask
+																									验证Flask是否正确安装：
+																									(venv) $ python
+																									>>> import flask
+																									>>>
+																									假如我们要在虚拟运行环境安装django：
+																									(venv) $ pip install django
+																									验证django：
+																									$ django-admin.py --help
+******************************************************************************************************************************************************/
+
+
+
+================================================================
+切换到xue
+================================================================
+6.3 安装virtualenvwrapper
+ 	
+	virtualenvwrapper的安装：
+		$pip install virtualenvwrapper  
+		
+		
+	配置virtualenvwrapper(#####哪个用户环境就用哪个用户#####) 
+	--------------------------------------------------------------------------
+		安装好之后需要简单配置下，主要是设置独立环境的保存路径：
+			$ export WORKON_HOME=$HOME/.virtualenvs
+			$ mkdir -p $WORKON_HOME
+			$ source /usr/local/bin/virtualenvwrapper.sh
+			$ mkvirtualenv cms
+			
+			
+		安装完成后， 会在下面的位置生成virtualwrapper的shell脚本。/usr/local/bin/virtualenvwrapper.sh
+		在使用virtualenvwrapper时， 需要配置登录的shell初始化脚本， 将virtualenvwrapper.sh的信息读入当前的shell环境。 
+		或者	
+		通过对用户根目录下（即/home/[username]）的.bashrc配置文件进入如下修改即可。
+		修改~/.bashrc
+ 
+			export WORKON_HOME=$HOME/.virtualenvs
+			export PROJECT_HOME=$HOME/ProjectSpace
+			export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python
+			export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
+			
+			if [[ -r /usr/local/bin/virtualenvwrapper.sh ]]; then        
+				source /usr/local/bin/virtualenvwrapper.sh   
+			else        
+				echo "WARNING: Can't find virtualenvwrapper.sh"    
+			fi
+	
+		再次读入.bashrc:
+		$ source ~/.bashrc
+	--------------------------------------------------------------------------------  
+	使用virtualenvwrapper   
+		我们可以输入命令mkvirtualenv， 看一下其是否可用。
+		$ mkvirtualenv --help
+ 
+		建立虚拟环境：
+		$ mkvirtualenv env2.7
+		确认虚拟环境：
+		$ ls -la $HOME/.virtualenvs
+
+		(env)xx@ubuntu:~$ ls -la /usr/xue/.virtualenvs/
+		总用量 60
+		drwxrwxr-x 3 xx xx 4096 1月 7 11:29 .
+		drwxr-xr-x 29 xx xx 4096 1月 13 13:45 ..
+		drwxrwxr-x 6 xx xx 4096 1月 7 11:31 env2.7
+		-rwxr-xr-x 1 xx xx 135 1月 7 11:06 get_env_details
+		-rw-r--r-- 1 xx xx 96 1月 7 11:06 initialize
+		-rw-r--r-- 1 xx xx 73 1月 7 11:06 postactivate
+		-rw-r--r-- 1 xx xx 75 1月 7 11:06 postdeactivate
+		-rwxr-xr-x 1 xx xx 66 1月 7 11:06 postmkproject
+		-rw-r--r-- 1 xx xx 73 1月 7 11:06 postmkvirtualenv
+		-rwxr-xr-x 1 xx xx 110 1月 7 11:06 postrmvirtualenv
+		-rwxr-xr-x 1 xx xx 99 1月 7 11:06 preactivate
+		-rw-r--r-- 1 xx xx 76 1月 7 11:06 predeactivate
+		-rwxr-xr-x 1 xx xx 91 1月 7 11:06 premkproject
+		-rwxr-xr-x 1 xx xx 130 1月 7 11:06 premkvirtualenv
+		-rwxr-xr-x 1 xx xx 111 1月 7 11:06 prermvirtualenv
+		(env)xx@ubuntu:~$ 
+
+		与virtualenv的相同处与不同处， 其中， 退出虚拟运行环境的命令同样是deactivate， 进入虚拟运行环境的命令变为workon。
+		退出虚拟环境：deactivate
+		进入已存在的环境或者切换环境：workon env1或者env2
+		浏览虚拟环境:workon
+		删除虚拟环境： rmvirtualenv env1
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+练习：如何使用virtualenvwrapper切换不同版本的python？
+	安装python3.4.0 
+	
+	先装依赖包，否则安装失败
+	yum -y install openssl openssl-devel
+		
+		cd ~/src/
+		wget http://www.python.org/ftp/python/3.4.0/Python-3.4.0.tgz
+		tar -zxvf Python-3.4.0.tgz
+		mv ~/Downloads/Python-3.4.0  /usr/local/Python-3.4.0
+		./configure --prefix=/usr/local/python-3.4.0 --with-zlib
+		make && make altinstall
+
+3. 创建环境 
+	virtualenv -p /usr/local/bin/python2.7 venv2710
+	virtualenv -p /usr/local/python-2.7.10/bin/python2.7 venv2710
+
+	mkvirtualenv -p /usr/local/python-3.4.0/bin/python3.4 venv340
+	
+	 
+	这样就分别建立了python2.7和3.4两个版本的虚拟环境
+
+4. 切换
+workon env27
+看一下python的版本
+python --version
+>>Python 2.7.6
+再切到3.4的环境
+workon env34
+查一下版本
+python --version
+
+>>Python 3.4.0
+看来两个版本的python都工作正常：
+
+5.退出环境：deactivate
+
+		mkvirtualenv [虚拟环境名称]创建虚拟环境 
+		workon [虚拟环境名称]切换到环境
+		deactivate 注销当前环境
+		lsvirtualenv 列出所有环境
+		rmvirtualenv [虚拟环境名称]删除环境
+		cpvirtualenv 复制环境
+		cdsitepackages cd到当前环境的site-packages目录
+		lssitepackages 列出当前环境中site-packages内容
+		setvirtualenvproject 绑定现存的项目和环境
+		wipeenv 清除环境内所有第三方包
+---------------------------------------------------------------------------		
+		  
+	-----------------------------
+	2.7 在virt1环境中安装matplotlib
+	source ~/.virtualenvs/env27/bin/activate
+	(env)xx@MASTER:~$ pip install matplotlib
+	(env)xx@MASTER:~$python
+	(env)xx@MASTER:~$import numpy;print numpy.__version__
+	(env)xx@MASTER:~$import matplotlib;print matplotlib.__version__
+	 
+	
+	2.9 如何给这个env安装依赖库？
+	我使用了requirements.txt来保存需要安装的库及其版本，剩下的交给pip去搞定就行了
+	$ cat requirements.txt
+		pexpect
+		pyOpenSSL == 0.15.1
+		requests
+	$ pip install -r requirements.txt
+	-----------------------------
+	
+
+
+				===================================================== 
+				1，安装scipy、numpy: 
+					 #yum install scipy
+					 pip install numpy==1.6.0
+					 或者 
+						①    http://sourceforge.net/projects/numpy/files/NumPy/，我下载的是numpy-1.6.2.tar.gz
+						说明：Numpy的高版本对python是进行兼容的，也就是直接下载最新版就可以了
+						②    tar –xf numpy-1.6.2.tar.gz
+						③    cd numpy-1.6.2
+						④    python setup.py build
+						⑤    python setup.py install
+				-------------------------------------------
+				2，安装libpng
+				
+					yum install libjpeg-devel libpng-devel freetype-devel 
+					或者
+					rpm -qa libpng
+					或者
+					①   下载libpng-1.2.50.tar.gz
+					②   tar –xf libpng-1.2.50.tar.gz
+					③   cd libpng-1.2.50
+					④   ./configure --prefix=/usr/local/libpng;
+					⑤   make && make install
+				----------------------------------
+				4、安装freetype 1.4+ 
+					yum install freetype freetype-devel libpng-devel
+				
+					
+				/*********************************************************
+							从http://savannah.nongnu.org/download/freetype/ 
+							or from 
+							http://sourceforge.net/projects/freetype/files/
+							找到下载地址
+							cd ~/Downloads
+							wget  http://download.savannah.gnu.org/releases/freetype/freetype-2.4.10.tar.gz
+							tar zxvf freetype-2.4.10.tar.gz
+							cd freetype-2.4.10/cd 
+							./congfigure
+							make install						
+				*********************************************************/
+				-------------------------------------------------
+				
+				5、安装matplotlib
+				①   http://sourceforge.net/projects/matplotlib/files/matplotlib/，下载matplotlib-1.1.1_notests.tar.gz
+				说明：matplotlib同样是高版本对低版本的python进行兼容，所以直接下载最新版本
+				②    tar –xf matplotlib-1.1.1_notests.tar.gz
+				③	  cd matplotlib-1.1.1_notests
+				④    python setup.py build
+				⑤    python setup.py install
+				说明，此步我出现了问题，由于开发机器上存在libpng，并且有多个版本，所以我在安装时，跳过了libphg的安装，报错如下：
+
+				/usr/bin/ld: /usr/local/lib/libpng12.a(libpng12_la-png.o): relocation R_X86_64_32 against `a local symbol' can not be used when making a shared object; recompile with -fPIC
+
+				/usr/local/lib/libpng12.a: could not read symbols: Bad value
+				说明在加载libpng12.a符号时出错，
+				解决办法是：
+				mv /usr/local/lib/libpng12.a /usr/local/lib/libpng12.a_
+				或者删除libpng重装
+				完成以上步骤，验证
+
+				即可在目录下看到test.png的图片。
+
+
+				------------------------------------------------
+				注：直接装IPython，其提供的PyLab模式已经导入了matplotlib库与相关软件包（NumPy、SciPy）
+
+				yum -y install python-scipy python-matplotlib
+
+				=============================================================================
+
+				 
+
+
+				 
+				 
+7.安装图像处理工具：Python图像库PIL
+	/**********************************
+	1. 安装PIL所需的系统库
+		yum install zlib zlib-devel libjpeg libjpeg-level freetype freetype-devel  python-imaging  
+		$ pip install PIL	
+	在线手册：http://www.pythonware.com/library/pil/handbook/index.html
+	************************************/
+	http://pypi.python.org/pypi/Pillow
+	Pillow 是 PIL 的替代版本，PIL软件包提供了基本的图像处理功能，
+	如：改变图像大小，旋转图像，图像格式转换，色场空间转换，图像增强，直方图处理，插值和滤波等等。
+	Pillow 为了解决 PIL 的两个问题：
+		1. 不兼容 setuptools 
+		2. 报告的问题太多，而更新太慢  
+
+----------------------------------------------------------
+
+Pillow 的许多功能需要外部库的支持:  
+		/************************************/
+		yum install python-dev python-setuptools libjpeg libjpeg-level zlib zlib-devel libtiff-devel freetype freetype-devel lcms lcms-devel tcl-devel tk-devel python-imaging  
+		************************************/
+	$ sudo yum install libtiff-devel libjpeg-devel libzip-devel freetype-devel lcms-devel libwebp-devel tcl-devel tk-devel
+	$ pip install Pillow
+8.安装requests模块
+	$ pip install requests	
+	demo:
+	import requests
+	r=requests.get('http://github.com/timeline,json')
+	print r.content
+	  
+=======================================================================================
+4.安装pycharm
+下载pycharm3,安装时需要jdk支持。yum安装的只是openjdk不能用，据说时oracle授权的问题，新的linux都没有jdk了。从官网下载rpm,rpm -ivh安装，默认到/usr/java.
+
+配置下环境变量：
+
+sudo vim /etc/profile
+
+添加如下：
+
+export JAVA_HOME=/usr/java/jdk1.7.0_51
+export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+export PATH=$PATH:$JAVA_HOME/bin
+
+cd到pycharm目录，
+sh pycharm.sh开始安装。安装完成后注册：
+
+
+用户名：yueting3527
+
+注册码：
+===== LICENSE BEGIN =====
+93347-12042010
+00001FMHemWIs"6wozMZnat3IgXKXJ
+2!nV2I6kSO48hgGLa9JNgjQ5oKz1Us
+FFR8k"nGzJHzjQT6IBG!1fbQZn9!Vi
+===== LICENSE END =====
+WingIDE5.1
+----------------------------------
+有人觉得从终端中启动太麻烦，那么将其加入到系统菜单，如Applications>Development下。
+1）在/usr/share/applications下创建文件wingide.desktop，内容如下：
+
+[Desktop Entry]
+Name=WingWare python IDE
+Comment=Wingware's Python IDE is an Integrated Development Environment
+Exec=/usr/local/bin/wing4.1
+Terminal=false
+Type=Application
+Icon=/usr/local/lib/wingide4.1/resources/linux/wing32.xpm
+Categories=Development;IDE;
+StartupNotify=true
+
+对于Exec和Icon两项，请根据实际路径更改。
+
+2）更新desktop数据库
+
+update-desktop-database
+
+去系统菜单下找一下WingWare python IDE，启动，大功告成。
+
+
+============================================================================================
+============================================================================================
+============================================================================================
+============================================================================================
+============================================================================================
+sublimetext3 
+http://segmentfault.com/a/1190000002987604
+
+===========================================================================================
+===========================================================================================
+============================================================================================
+============================================================================================
+============================================================================================
+============================================================================================
+
+
+
+ 
+第1章 准备工作环境 1 
+
+#==============================================================================
+# 第2章 了解数据 15
+# 2．1 简介 16
+# 2．2 从CSV文件导入数据 16
+#==============================================================================
+	#使用$head some_file.csv
+		import csv
+		filename = 'ch02-data.csv'
+		data = []
+		try:
+			#不必担心在操作完资源之后去关闭数据文件，with语句的上下文管理器会帮助处理。
+			with open(filename) as f:
+				reader = csv.reader(f)
+				c = 0
+				for row in reader:
+					if c == 0:
+						header = row
+					else:
+						data.append(row)
+					c += 1
+		except csv.Error as e:
+			print "Error reading CSV file at line %s: %s" % (reader.line_num, e)
+			sys.exit(-1)
+		if header:
+			print header
+			print '=================='
+		for datarow in data:
+			print datarow
+	--------------------------------------------------------------------------
+	加载大数据文件，
+	import numpy
+	#速度较快
+	data=numpy.loadtxt('ch02-data.csv',dtype='string',delimiter=',')
+	for datarow in data:
+		print datarow
+	#更好的处理缺失数据
+	data=numpy.genfromtxt('ch02-data.csv',dtype='string',delimiter=',')
+	for datarow in data:
+		print datarow
+#==============================================================================
+# 2．3 从Microsoft Excel文件中导入数据 18 
+#==============================================================================
+	#读写操作的支持是通过不同模块实现的，跨平台！
+	$ mkvirtualenv xlrdexample
+	(xlrdexample)$ pip install xlrd
+	
+	#在指定工作簿中的工作表中，根据行数nrows和列数ncols读取单元格的内容:
+	#xlrd模块按照需要,仅加载文件的部分内容到内存中
+	import xlrd
+	from xlrd.xldate import XLDateAmbiguous
+	file = 'ch02-xlsxdata.xlsx'
+	wb = xlrd.open_workbook(filename=file)
+	#
+	wb = xlrd.open_workbook(filename=file,on_demand=True)
+	ws = wb.sheet_by_name('Sheet1')
+	dataset = []
+	for r in ws.nrows:
+		col = []
+		for c in ws.ncols:
+			col.append(ws.cell(r, c).value)
+			#if ws.cell_type(r, c) == xlrd.XL_CELL_DATE:
+			#	try:
+			#		print ws.cell_type(r, c)
+			#		from datetime import datetime
+			#		date_value = xlrd.xldate_as_tuple(ws.cell(r, c).value, wb.datemode)
+			#		print datetime(*date_value)
+			#	except XLDateAmbiguous as e:
+			#		print e
+		dataset.append(col)
+	#from pprint import pprint
+	#pprint(dataset)
+  
+
+#==============================================================================
+# 2．4 从定宽数据文件导入数据 21
+#==============================================================================
+	#性能更重要，或者要解析的文件非常大时，使用Python中的struct模块
+	import struct
+	import string
+
+	mask='9s14s5s'
+	parse = struct.Struct(mask).unpack_from
+	print 'formatstring {!r}, record size: {}'
+			.format(mask, struct.calcsize(mask))
+	datafile = 'ch02-fixed-width-1M.data'
+
+	with open(datafile, 'r') as f:
+		for line in f:
+			fields = parse(line)
+			print 'fields: ', [field.strip() for field in fields]
+		
+
+#==============================================================================
+# 2．5 从制表符分隔的文件中读取数据 23
+#==============================================================================
+"day"   "ammount"
+2013-01-24  323
+2013-01-25  233
+2013-01-26  433
+2013-01-27  555
+2013-01-28  123
+2013-01-29    0
+2013-01-30  221
+
+	import struct
+	import string
+
+	mask='9s14s5s'
+	parse = struct.Struct(mask).unpack_from
+	print 'formatstring {!r}, record size: {}' .format(mask, struct.calcsize(mask))
+	datafile = 'ch02-fixed-width-1M.data'
+
+	with open(datafile, 'r') as f:
+		for line in f:
+			fields = parse(line)
+			print 'fields: ', [field.strip() for field in fields]
+------------------------------------------------------------------
+"day"   "ammount"
+2013-01-24  323 
+2013-01-25  233 
+2013-01-26  433
+2013-01-27  555
+2013-01-28  123
+    2013-01-29    0
+2013-01-30  221
+
+	datafile = 'ch02-data-dirty.tab'
+	with open(datafile, 'r') as f:
+		for line in f:
+			# remove next comment to see line before cleanup
+			# print 'DIRTY: ', line.split('\t')
+
+			# we remove any space in line start or end 
+			line = line.strip() 
+			# now we split the line by tab delimiter
+			print line.split('\t')  
+
+------------------------------------------------------------------
+
+#==============================================================================
+# 2．6 从JSON数据源导入数据 24
+#==============================================================================
+	$pip install requests
+	
+	import requests
+	import json
+	url = 'https://github.com/timeline.json' 
+	r = requests.get(url)
+	json_obj = r.json()
+
+	print json.dumps(json_obj,sort_keys=True,indent=4)
+
+	data1 = {'b':789,'c':456,'a':123}
+	print json.dumps(data1,sort_keys=True,indent=4)
+=============================	
+1.对简单数据类型的encoding 和 decoding：
+	使用简单的json.dumps方法对简单数据类型进行编码.
+	
+	
+	在json的编码过程中，会存在从python原始类型向json类型的转化过程:
+	Python  -->>>>>---  JSON  	-->>>>>--- Python  			
+	dict				object				dict
+	list,tuple			array				list				
+	str,unicode			string				unicode
+	int,long,float		number	 (int)		int,long	
+						number	 (real)		float
+	True				true	 			True	
+	False				false				Flase
+	None				null				None
+	
+	
+	#coding=utf-8
+	import json
+	from decimal import Decimal
+	obj = [[1,2,3],123,123.123,'abc',{'key1':(1,2,3),'key2':(4,5,6)}]
+	encodedjson = json.dumps(obj)
+	print repr(obj)
+	print encodedjson
+
+#[[1, 2, 3], 123, 123.123, 'abc', {'key2': (4, 5, 6), 'key1': (1, 2, 3)}] 
+#[[1, 2, 3], 123, 123.123, "abc", {"key2": [4, 5, 6], "key1": [1, 2, 3]}]
+------------------------------------------------------------------------------
+
+json.dumps方法提供了很多好用的参数可供选择，
+比较常用的有sort_keys（对dict对象进行排序，我们知道默认dict是无序存放的），
+separators，indent等参数。
+	data1 = {'b':789,'c':456,'a':123}
+	data2 = {'a':123,'b':789,'c':456}
+	
+	d1 = json.dumps(data1,sort_keys=True)
+	print d1					#{"a": 123, "b": 789, "c": 456}	
+	d2 = json.dumps(data2)
+	print d2					#{"a": 123, "c": 456, "b": 789}
+	d3 = json.dumps(data2,sort_keys=True)
+	print d3					#{"a": 123, "b": 789, "c": 456}
+	print d1==d2				False	
+	print d1==d3				True
+#indent参数是缩进的意思，它可以使得数据存储的格式变得更加优雅。
+print json.dumps(data1,sort_keys=True,indent=4)
+#{ 
+#    "a": 123, 
+#    "b": 789, 
+#    "c": 456 
+#}
+------------------------------------------------------------------------
+loads方法返回了原始的对象，但是仍然发生了一些数据类型的转化。例‘abc’转化为了unicode类型
+
+	decodejson = json.loads(encodedjson)
+	print type(decodejson)
+	print decodejson[4]['key1']									
+	print decodejson
+#<type 'list'> 
+#[1, 2, 3]
+#[[1, 2, 3], 123, 123.123, u'abc', {u'key2': (4, 5, 6), u'key1': (1, 2, 3)}]
+
+	jstring='{"name":"xue","price":12.50}'
+	decodejson=json.loads(jstring,parse_float=Decimal)
+	print decodejson
+#{u'price':Decimal(12.50),u'name':u'xue'}
+
+------------------------------------------------------------------------
+json主要是作为一种数据通信的格式存在的，
+而网络通信是很在乎数据的大小的，无用的空格会占据很多通信带宽，所以适当时候也要对数据进行压缩。
+separator参数可以起到这样的作用，该参数传递是一个元组，包含分割对象的字符串。
+	#coding=utf-8
+	import json
+	data={'a': 123, 'c': 456, 'b': 789}													
+#DATA: {'a': 123, 'c': 456, 'b': 789}						
+	print 'repr(data) :', len(repr(data))
+#repr(data): 30
+	print 'dumps(data) :', len(json.dumps(data))
+#dumps(data): 30
+	print 'dumps(data, indent=2):', len(json.dumps(data, indent=4))
+#dumps(data, indent=2)  : 46
+	print 'dumps(data, separators):', len(json.dumps(data, separators=(',',':')))
+#dumps(data, separators): 25
+	print json.dumps(data, separators=(',',':'))
+#{"a":123,"c":456,"b":789}
+
+------------------------------------------------------------------------
+另一个比较有用的dumps参数是skipkeys，默认为False。 dumps方法存储dict对象时，key必须是str类型，如果出现了其他类型的话，那么会产生TypeError异常，
+如果开启该参数，设为True的话，则会比较优雅的过度。
+	data = {'b':789,'c':456,(1,2):123}
+	print json.dumps(data,skipkeys=True)
+#{"c": 456, "b": 789}
+------------------------------------------------------------------------
+
+	 
+=======================
+2.处理自己的数据类型
+#方法二：继承JSONEncoder和JSONDecoder类，覆写相关方法 
+import json
+
+	
+class Person(object):
+	def __init__(self,name,age):
+		self.name = name;
+		self.age = age;
+	def __repr__(self):
+		print (('Person Object name : %s , age:%d')%(self.name,self.age))
+class MyEncoder(json.JSONEncoder):
+	def default(self,obj):
+		#convert object to a dict
+		d = {}
+		d['__class__'] = obj.__class__.__name__
+		d['__module__'] = obj.__module__
+		d.update(obj.__dict__)
+		return d
+class MyDecoder(json.JSONDecoder):
+	def __init__(self):
+		json.JSONDecoder.__init__(self,object_hook=self.dict2object)
+	def dict2object(self,d):
+		#convert dict to object
+		if'__class__' in d:
+			class_name = d.pop('__class__')
+			module_name = d.pop('__module__')
+			module = __import__(module_name)
+			class_ = getattr(module,class_name)
+			args = dict((key.encode('ascii'), value) for key, value in d.items()) #get args
+			inst = class_(**args) #create new instance
+		else:
+			inst = d
+		return inst
+
+
+if __name__ == '__main__':
+	p = Person('Peter',22)
+p = Person('Peter',22)
+#print p
+d =MyEncoder().encode(p)
+print d
+o =MyDecoder().decode(d)
+print  type(o)
+
+#==============================================================================
+# 2．7 导出数据到JSON、CSV和Excel 27
+#==============================================================================
+	#Excel读操作
+	pip install xlwt
+
+def import_data(import_file):
+    mask = '9s14s5s'
+    data = []
+    parse = struct.Struct(mask).unpack_from
+    i =1
+    with open(import_file, 'r') as f:
+        for line in f:
+            fields = parse(line)
+            data.append(list([f.strip() for f in fields]))
+            i=i+4
+            if i >100:
+                return data
+    return data
+-----------------------------------------------------------------
+def write_data(data, export_format):
+    if export_format == 'csv':
+        return write_csv(data)
+    elif export_format == 'json':
+        return write_json(data)
+    elif export_format == 'xlsx':
+        return write_xlsx(data)
+    else:
+        raise Exception("Illegal format defined")
+
+-----------------------------------------------------------------
+def write_csv(data):
+    writer = csv.writer(file('export_csv.csv', 'wb'))
+    for row in data:
+        writer.writerow(row)
+    return "export_csv.csv"
+
+-----------------------------------------------------------------
+def write_json(data):
+    with open("export_json.json", "a") as file_obj:
+        file_obj.write(json.dumps(data))
+    return "export_json.json"
+	
+-----------------------------------------------------------------
+def write_xlsx(data):
+    from xlwt import Workbook
+    book = Workbook()
+    sheet1 = book.add_sheet("Sheet 1")
+    row = 0
+    for line in data:
+        col = 0
+        for datum in line:
+            sheet1.write(row, col, datum)
+            col += 1
+        row += 1
+        # We have hard limit here of 65535 rows
+        # that we are able to save in spreadsheet.
+        if row > 65535:
+            print >> sys.stderr, "Hit limit of # of rows in one sheet (65535)."
+            break
+    book.save("export_xlsx.xls")
+    return "export_xlsx.xls"
+    
+	
+
+#==============================================================================
+# 2．8 从数据库导入数据 31
+#==============================================================================
+	$pip install sqlite3
+
+	import sqlite3
+	import sys
+
+	script_path = "/root/PycharmProjects/demo/world.sql"
+	db ='/root/PycharmProjects/demo/world.db'
+	# if DB is not defined ,create memory database
+	#db = ":memory:"
+	try:
+		con = sqlite3.connect(db)
+		with con:
+			cur = con.cursor()
+			with open(script_path,'rb') as f:
+				cur.executescript(f.read())
+		print("Finish")
+	except sqlite3.Error as err:
+		print "Error occured: %s" % err
+		
+-----------------------------------------------------------------
+import sqlite3
+import sys
+db = "/root/PycharmProjects/demo/world.db"
+try:
+    con = sqlite3.connect(db)
+    with con:
+        cur = con.cursor()
+        query = 'SELECT ID, Name, Population FROM City ORDER BY Population DESC LIMIT 1000'
+
+        con.text_factory = str
+        cur.execute(query)
+        resultset = cur.fetchall()
+        # extract column names
+        col_names = [cn[0] for cn in cur.description] 
+        print "%10s %30s %10s" % tuple(col_names)
+        print "="*(10+1+30+1+10)
+
+        for row in resultset:
+            print "%10s %30s %10s" % row
+except sqlite3.Error as err:
+    print "[ERROR]:", err
+	
+#==============================================================================
+# 2．9 清理异常值 36
+#==============================================================================
+yum install libpng
+pip install matplotlib
+
+
+
+
+
+
+
+
+#==============================================================================
+# 2．10 读取大块数据文件 42
+#==============================================================================
+#即使相当大的文件也可轻松操作（按需加载）
+	with open(bigfile_path,'r') as bigfile:
+		for line in bigfile
+			#...
+			
+			
+			
+#按文件块依次读取，而不需要将整个文件读取到内存中
+	import sys 
+	filename = "ch02-fixed-width-1M.data" 
+	with open(filename, 'rb') as hugefile:
+		chunksize = 1000
+		readable = ''
+		# if you want to stop after certain number of blocks 
+		# put condition in the while
+		while hugefile:
+		
+			start = hugefile.tell()
+			for _ in range(start, start + chunksize):
+				file_block= hugefile.next()
+				print file_block
+				readable = readable + file_block 
+			stop = hugefile.tell()
+			
+			print ('readable    %s')%(readable)
+			print 'reading bytes from %s to %s' % (start, stop)
+			print 'read bytes total:', len(readable)
+
+			raw_input()
+
+#大文件的读取其他方案
+#并行方法，如MapReduce
+#多进程处理，
+
+
+
+#==============================================================================
+# 2．11 读取流数据源 44
+#==============================================================================
+
+##读取一个实时变化的文件 
+#应用：例如输入是一个类文件对象或者一个远程HTTP资源，
+#就可以从远程服务读取输入信息，并持续地解析它，然后实时地更新图表，或者更新到中间队列、缓冲或者数据库
+
+#在更为复杂的数据管道中，需要启用消息队列。达到的连续数据会被放在队列里一段时间，然后才能被我们接收到。
+
+
+
+import time
+import os
+import sys
+ 
+with open('stream.data','r') as file:
+    # Move to the end of file
+    filesize = os.stat(filename)[6]
+    file.seek(filesize)
+ 
+    while True:
+        where = file.tell()
+        # try reading a line
+        line = file.readline()
+        # if empty, go back
+        if not line:
+            time.sleep(1)
+            file.seek(where)
+        else:
+            # , at the end prevents print to add newline, as readline() 
+            # already read that.
+            print line,
+
+----------------------------------------------------------------------------
+
+#coding=utf-8
+#第一个用来读取文件中的字节
+def FileStream(filename):
+    try:
+        f = open(filename)
+        for line in f:
+            for byte in line:
+                yield byte
+    except StopIteration, e:
+        f.close()
+        return 
+#，第二个用来过滤流中的字节，
+def FilterStream(source, condition):
+    try:
+        while True:
+            byte = source.next()
+            if condition(byte):
+                yield byte
+    except StopIteration, e:
+        return 
+#第三个将流进的数据打印出来。
+def PrintStream(source):
+    try:
+        while True:
+            byte = source.next()
+            print byte
+    except StopIteration, e:
+        return
+ 
+PrintStream(FilterStream(FileStream('stream.data'), str.islower))
+
+
+ 
+
+
+#==============================================================================
+# 2．12 导入图像数据到NumPy数组 46
+#==============================================================================
+$pip install  scipy
+#############Lena图
+#SciPy将这幅图打包在了misc模块中，因此可以很简单的重用这幅图
+import scipy.misc
+import matplotlib.pyplot as plt
+lena = scipy.misc.lena()
+plt.gray()
+plt.imshow(lena)
+plt.colorbar()
+plt.show()
+print lena.shape        #(512, 512)
+print lena.max()        #245
+print lena.dtype        #int32
+
+##########PIL
+pip install PIL --allow-external PIL --allow-unverified PIL
+
+
+
+##########放大图像
+import matplotlib.pyplot as plt
+import scipy
+import numpy
+# because the image we loaded is RGB image, 
+# http://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
+bug = scipy.misc.imread('stinkbug.png')
+
+# if you want to inspect the shape of the loaded image
+# uncomment following line
+print bug.shape     #(375, 500, 3)
+bug = bug[:,:,0]# convert to gray
+
+# show original image
+plt.figure()
+plt.gray()
+plt.subplot(121)
+plt.imshow(bug)
+
+# show 'zoomed' region
+zbug = bug[100:350,140:350]#指定放大[100:350,140:350]之间的部分矩阵
+plt.subplot(122)
+plt.imshow(zbug)
+
+plt.show()
+
+
+###########对于大图像推荐使用numpy.memmap来做图像的内存映射
+import numpy
+image=numpy.memmap('stinkbug.png', dtype=int, mode='r+',shape=(375,500))
+
+
+#专注于图像处理的专业软件包
+scikit-image:http://scikit-image.org/
+
+ 
+
+#==============================================================================
+# 2．13 生成可控的随机数据集合 51
+#==============================================================================
+############生成一个简单的随机数样本
+import pylab 
+import random 
+SAMPLE_SIZE = 100 
+random.seed() # seed random generator,if no argument provided,uses system current time
+real_rand_vars = [] # store generated random values here
+
+# we don't need iterator value, so we can put call it '_'
+for _ in range(SAMPLE_SIZE):
+    new_value = random.random() # get next random value
+    real_rand_vars.append(new_value) 
+
+# create histogram from data in 10 buckets
+pylab.hist(real_rand_vars, 10)
+
+pylab.xlabel("Number range") 
+pylab.ylabel("Count") 
+
+# show figure
+pylab.show()
+
+############生成虚拟价格增长数据的时序图
+import pylab 
+import random 
+
+# days to generate data for 
+duration = 100 
+mean_inc = 0.2 # mean value
+std_dev_inc = 1.2 # standard deviation
+x = range(duration) # time series 
+y = [] 
+for i in x: 
+    next_delta = random.normalvariate(mean_inc, std_dev_inc) 
+    price_today += next_delta 
+    y.append(price_today) 
+
+pylab.plot(x,y) 
+pylab.xlabel("Time")
+pylab.ylabel("Value") 
+pylab.show() 
+
+
+###################不同的分布显示直方图
+# coding: utf-8
+import random
+import matplotlib
+import matplotlib.pyplot as plt
+SAMPLE_SIZE = 1000
+buckets = 100# histogram buckets
+plt.figure()
+matplotlib.rcParams.update({'font.size': 7})# we need to update font size just for this example
+
+
+###[0.0, 1.0)之间随机分布
+plt.subplot(621)
+plt.xlabel("random.random")
+res = []
+for _ in xrange(1, SAMPLE_SIZE):res.append(random.random())
+plt.hist(res, buckets)
+
+
+###均匀分布[a,b]
+plt.subplot(622)
+plt.xlabel("random.uniform")
+a = 1,b = SAMPLE_SIZE,res = []
+for _ in xrange(1, SAMPLE_SIZE):res.append(random.uniform(a, b))
+plt.hist(res, buckets)
+
+
+###三角形分布
+plt.subplot(623)
+plt.xlabel("random.triangular")
+low = 1, high = SAMPLE_SIZE,	res = []
+for _ in xrange(1, SAMPLE_SIZE):res.append(random.triangular(low, high))
+plt.hist(res, buckets)
+
+###beta分布
+plt.subplot(624)
+plt.xlabel("random.betavariate")
+alpha = 1, beta = 10,res = []
+for _ in xrange(1, SAMPLE_SIZE):res.append(random.betavariate(alpha, beta))
+plt.hist(res, buckets)
+
+###指数分布
+plt.subplot(625)
+plt.xlabel("random.expovariate")
+lambd = 1.0 / ((SAMPLE_SIZE + 1) / 2.),res = []
+for _ in xrange(1, SAMPLE_SIZE): res.append(random.expovariate(lambd))
+plt.hist(res, buckets)
+
+
+###gamma分布
+# The probability distribution function is:
+#Conditions on the parameters are alpha > 0 and beta > 0.
+#           x ** (alpha - 1) * math.exp(-x / beta)
+# pdf(x) =  --------------------------------------
+#             math.gamma(alpha) * beta ** alpha
+plt.subplot(626)
+plt.xlabel("random.gammavariate")
+alpha = 1,beta = 10,res = []
+for _ in xrange(1, SAMPLE_SIZE):res.append(random.gammavariate(alpha, beta))
+plt.hist(res, buckets)
+
+
+###对数正态分布Log normal distribution。mu is the mean, and sigma is the standard deviation.
+plt.subplot(627)
+plt.xlabel("random.lognormvariate")
+mu = 1,sigma = 0.5,res = []
+for _ in xrange(1, SAMPLE_SIZE):res.append(random.lognormvariate(mu, sigma))
+plt.hist(res, buckets)
+
+
+###正态分布 Normal distribution. mu is the mean, and sigma is the standard deviation.
+plt.subplot(628)
+plt.xlabel("random.normalvariate")
+mu = 1,sigma = 0.5,res = []
+for _ in xrange(1, SAMPLE_SIZE):res.append(random.normalvariate(mu, sigma))
+plt.hist(res, buckets)
+
+
+###帕累托分布，Pareto distribution. alpha is the shape parameter.
+plt.subplot(629)
+plt.xlabel("random.paretovariate")
+alpha = 1,res = []
+for _ in xrange(1, SAMPLE_SIZE):res.append(random.paretovariate(alpha))
+plt.hist(res, buckets)
+plt.tight_layout()
+plt.show()
+
+
+###########随机数
+1)用seed初始化伪随机数生成器，这样random()方法就能生成相同的期望随机值。
+	比较有用，比预先生成随机数并保存到到文件中要好。
+	
+2)避免随机生成的序列重复，推荐使用random.SystemRandom,其底层使用os.urandom。
+os.urandom提供更多熵源的访问,seed()和setstate()没有影响，则样本不可重现了。
+
+
+例子:想要一些随机单词
+#Linux，针对Unix系统
+	import random
+	with open('/usr/share/dict/words') as f:
+		words=f.readlines()
+	words=[w.rstrip() for w in words]
+	for w in random.sample(words,5):
+		print w
+		
+#Windows
+	http://norvig.com/big.txt
+
+#==============================================================================
+# 2．14 真实数据的噪声平滑处理 58
+#==============================================================================
+
+
+------------------------------------------------------------------
+#========================================================
+#第3章 绘制并定制化图表 65
+#========================================================
+3．1 简介 65
+
+#==============================================================================
+# 3．2 定义图表类型——柱状图、线形图和堆积柱状图 66
+#==============================================================================
+3．2．1 准备工作 66
+3．2．2 操作步骤 66
+3．2．3 工作原理 69
+3．2．4 补充说明 70
+	from matplotlib.pyplot import *
+
+	x = [1,2,3,4];	y = [5,4,3,2]
+
+	figure()
+
+	subplot(231)
+	plot(x, y)
+
+	subplot(232)
+	bar(x, y)
+	#horizontal bar-charts
+	subplot(233)
+	barh(x, y)
+
+	#stacked bar-charts
+	subplot(234)
+	bar(x, y)
+	y1 = [7,8,5,3]
+	bar(x, y1, bottom=y, color = 'r')
+
+	subplot(235)
+	boxplot(x)
+
+	subplot(236)
+	scatter(x,y)
+
+	show()
+
+	'''
+	同一个箱线图可以显示五种数据：
+		最小值
+		最大值
+		中值
+		第二四分位数：其以下数据集合中较低的25%的数据
+		第三四分位数：其以上数据集合中较高的25%的数据 
+	from pylab import * 
+	dataset = [113, 115, 119, 121, 124, 
+			   124, 125, 126, 126, 126,
+			   127, 127, 128, 129, 130,
+			   130, 131, 132, 133, 136] 
+	subplot(121)
+	boxplot(dataset, vert=False)
+
+	subplot(122)
+	hist(dataset) 
+	show()
+#========================================================
+#3．3 简单的正弦图和余弦图 71
+#========================================================
+3．3．1 准备工作 71
+3．3．2 操作步骤 71
+		from pylab import *
+		import numpy as np
+
+		# generate uniformly distributed 
+		# 256 points from -pi to pi, inclusive
+		x = np.linspace(-np.pi, np.pi, 256, endpoint=True)
+		 
+		y = np.cos(x)
+		plot(x, y)
+
+		y1 = np.sin(x)
+		plot(x, y1)
+		 
+		title("Functions $\sin$ and $\cos$") 
+		xlim(-3.0, 3.0)# set x limit 
+		ylim(-1.0, 1.0)# set y limit
+
+		# format ticks at specific values
+		xticks([-np.pi, -np.pi/2, 0, np.pi/2, np.pi],  [r'$-\pi$', r'$-\pi/2$', r'$0$', r'$+\pi/2$', r'$+\pi$'])
+		yticks([-1, 0, +1],  [r'$-1$', r'$0$', r'$+1$'])
+
+		show()
+
+
+
+
+
+#==============================================================================
+# 3．4 设置坐标轴长度和范围 74
+#==============================================================================
+3．4．1 准备工作 74
+3．4．2 操作步骤 74
+3．4．3 工作原理 74
+3．4．4 补充说明 76
+		from pylab import *
+		axis()  #0.0,1.0,0.0,1.0
+		#添加新的坐标轴
+		axis([-1,1,-10,10]) 
+		axhline()   #绘制y=0的线
+		axvline()   #绘制x=0的线
+		axhline(4)  #绘制y=4
+		#grid()
+		grid(which=u'both',axis=u'both')
+#==============================================================================
+# 3．5 设置图表的线型、属性和格式化字符串 76
+#==============================================================================
+3．5．1准备工作 77
+3．5．2 操作步骤 77
+3．5．3 工作原理 77
+			import numpy as np
+			x = np.arange(0,4*math.pi,0.1)
+			y = sin(x)
+			#或者 plot(x,y,linewidth=1.5)
+			#或者 line = plot(x,y,linewidth=1.5)
+			#或者 
+			lines = plot(x,y)
+			#setp(lines,marker=7)
+
+			setp(lines,alpha=1)
+			'''
+			'b':蓝
+			'g':绿
+			'r':红
+			'c'
+			'm':
+			'y':黄
+			'k':黑
+			'w':白
+			'''
+
+			setp(lines,color='r')
+			setp(lines,color='#eeefff')
+			setp(lines,color=[0.3,0.3,0.3])
+
+			#setp(lines,dashes=[1,1]) #数组为序列各段的宽度,
+
+			'''
+				-  :实线
+				-- :破折线
+				-. :点划线
+			'''
+			setp(lines,linestyle='--')
+
+
+			setp(lines,label='das')
+
+			setp(lines,'linewidth',1.5)
+			setp(lines,linewidth=1.5)
+			setp(lines,lw=1.5)
+
+			'''线条标记
+			'o':圆圈
+			'D':菱形
+			'd':小菱形
+			'h':六边形
+			'H':六边形
+			'_':水平线
+			'',' ','None',None:无
+			'8':八边形
+			'p':五边形
+			',':像素
+			'+'
+			'.':
+			's':正方形
+			'*':
+			'v':三角形
+			'<':三角形
+			'>':三角形
+			'^':三角形
+			'|':竖线
+			'x':
+			'''
+			setp(lines,marker=',')
+			#标记边缘宽度
+			setp(lines,markeredgewidth=1)
+			setp(lines,mew=1)
+			#标记的边缘颜色
+			setp(lines,markeredgecolor='g')
+			setp(lines,mec='g')
+			#标记颜色
+			setp(lines,markerfacecolor='g')
+			setp(lines,mfc='g')
+
+			#subplot(111,axisbg=(0.1843,0.3098,0.3098))
+
+
+
+#==============================================================================
+# 3．6 设置刻度、刻度标签和网格 80
+#==============================================================================
+3．6．1 准备工作 80
+3．6．2 操作步骤 81
+		from pylab import *
+		import matplotlib as mpl
+		import datetime
+
+		fig = figure() 
+		ax = gca()# get current axis
+
+		# set some daterange
+		start = datetime.datetime(2013, 01, 01)
+		stop = datetime.datetime(2013, 12, 31)
+		delta = datetime.timedelta(days = 1) 
+		dates = mpl.dates.drange(start, stop, delta) # convert dates for matplotlib
+		values = np.random.rand(len(dates))# generate some random values
+
+		ax = gca() 
+		ax.plot_date(dates, values, linestyle='-', marker='')# create plot with dates
+		date_format = mpl.dates.DateFormatter('%Y-%m-%d')# specify formater
+		ax.xaxis.set_major_formatter(date_format)# apply formater
+
+		# autoformat date labels
+		# rotates labels by 30 degrees by default
+		# use rotate param to specify different rotation degree 
+		# use bottom param to give more room to date labels
+		fig.autofmt_xdate()
+
+		show()
+#==============================================================================
+# 3．7 添加图例和注解 83
+#==============================================================================
+3．7．1 准备工作 84
+3．7．2 操作步骤 84
+3．7．3 工作原理 85
+		from matplotlib.pyplot import *
+
+		# generate different normal distributions
+		x1 = np.random.normal(30, 3, 100)
+		x2 = np.random.normal(20, 2, 100)
+		x3 = np.random.normal(10, 3, 100)
+
+		# plot them
+		plot(x1, label='plot')
+		plot(x2, label='2nd plot')
+		plot(x3, label='last plot')
+
+		# generate a legend box
+		legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=3, mode="expand", borderaxespad=0.)
+
+		# annotate an important value
+		annotate("Important value", (55,20), xycoords='data', xytext=(5,38), arrowprops=dict(arrowstyle='->')) 
+		show()
+
+#==============================================================================
+# 3．8 移动轴线到图中央 86
+#==============================================================================
+3．8．1 操作步骤 86
+3．8．2 工作原理 87
+3．8．3 补充说明 87
+		import matplotlib.pyplot as plt
+		import numpy as np
+
+		x = np.linspace(-np.pi, np.pi, 500, endpoint=True) 
+		y = np.sin(x)
+
+		plt.plot(x, y) 
+		ax = plt.gca()
+
+		# hide two spines 
+		ax.spines['right'].set_color('none')
+		ax.spines['top'].set_color('none')
+
+		# move bottom and left spine to 0,0
+		ax.spines['bottom'].set_position(('data',0))
+		ax.spines['left'].set_position(('data',0))
+
+		# move ticks positions
+		ax.xaxis.set_ticks_position('bottom')
+		ax.yaxis.set_ticks_position('left')
+
+		plt.show()
+
+#==============================================================================
+# 3．9 绘制直方图 87
+#==============================================================================
+3．9．1 准备工作 88
+3．9．2 操作步骤 88
+3．9．3 工作原理 90
+		import numpy as np
+		import matplotlib.pyplot as plt
+		mu = 100
+		sigma = 15
+		x = np.random.normal(mu, sigma, 10000)
+		ax = plt.gca()
+		# the histogram of the data
+		'''相关参数
+		bins:
+		range:bin的范围
+		normed:若为True,直方图的值将进行归一化,形成概率密度
+		histtype:
+		    barstacked
+		    step
+		    stepfilled
+		align:
+		color:
+		orientation:
+		    orientation
+		    horizontal
+		'''
+		ax.hist(x, bins=35, color='r',normed=True,histtype='stepfilled')
+		ax.set_xlabel('Values')
+		ax.set_ylabel('Frequency')
+		ax.set_title(r'$\mathrm{Histogram:}\ \mu=%d,\ \sigma=%d$' % (mu, sigma))
+		plt.show()
+
+#==============================================================================
+# 3．10 绘制误差条形图 90
+#==============================================================================
+3．10．1 准备工作 90
+3．10．2 操作步骤 90
+3．10．3 工作原理 91
+3．10．4 补充说明 92
+		import numpy as np
+		import matplotlib.pyplot as plt 
+		x = np.arange(0, 10, 1)# generate measures from gaussian distribution 
+		y = np.log(x)					 # values computed from "measured" 
+		# add some error samples from standard normal distribution 
+		xe = 0.1 * np.abs(np.random.randn(len(y)))
+		
+		
+		'''# draw and show errorbar
+		width
+		bottom:柱状图的初始高度
+		edgecolor:误差条边界颜色
+		ecolor：误差条颜色
+		linewidth
+		orientation:vertical,horizontal
+		xerr,yerr:在柱状图上生成误差条
+		'''
+		plt.bar(x, y, yerr=xe, width=0.4, align='center', ecolor='r', color='cyan',label='experiment #1');
+		
+		# give some explainations
+		plt.xlabel('# measurement')
+		plt.ylabel('Measured values')
+		plt.title('Measurements')
+		plt.legend(loc='upper left')
+		
+		plt.show()
+
+#==============================================================================
+# 3．11 绘制饼图 92
+#==============================================================================
+3．11．1 准备工作 92
+3．11．2 操作步骤 93
+		import matplotlib.pyplot as plt 
+		
+		plt.figure(1, figsize=(8, 8))
+		ax = plt.axes([0.1, 0.1, 0.8, 0.8])
+
+		labels = 'Spring', 'Summer', 'Autumn', 'Winter'
+		values = [15, 16, 16, 28]
+		explode =[0.1, 0.1, 0.1, 0.1]
+		'''
+		startangle:
+		    0 :扇区将从x轴开始逆时针排列;
+		    90:从y轴开始逆时针排列
+		'''
+		plt.pie(values, explode=explode, labels=labels,  autopct='%1.1f%%', startangle=90) 
+		plt.title('Rainy days by season') 
+		plt.show()
+
+
+#==============================================================================
+# 3．12 绘制带填充区域的图表 94
+#==============================================================================
+3．12．1 准备工作 94
+3．12．2 操作步骤 94
+3．12．3 工作原理 95
+3．12．4 补充说明 96
+		from matplotlib.pyplot import figure, show, gca
+		import numpy as np 
+		x = np.arange(0.0, 2, 0.01) 
+		y1 = np.sin(2*np.pi*x)
+		y2 = 1.2*np.sin(4*np.pi*x)
+		
+		fig = figure()
+		ax = gca()
+		
+		ax.plot(x, y1, x, y2, color='black')
+		
+		ax.fill_between(x, y1, y2, where=y2>=y1, facecolor='darkblue', interpolate=True)
+		ax.fill_between(x, y1, y2, where=y2<=y1, facecolor='deeppink', interpolate=True)
+		#针对水平曲线 ax.fill_betweenx()
+		#ax.fill_betweenx()
+		#fill 对任意多边形填充颜色或者阴影线
+		
+		ax.set_title('filled between')
+		show()
+		
+#==============================================================================
+# 3．13 绘制带彩色标记的散点图 96
+#==============================================================================
+3．13．1 准备工作 96
+3．13．2 操作步骤 96
+3．13．3 工作原理 98
+		import numpy as np
+		import matplotlib.pyplot as plt
+		mu = 100
+		sigma = 15
+		x = np.random.normal(mu, sigma, 10000)
+		ax = plt.gca()
+		# the histogram of the data
+		'''相关参数
+		bins:
+		range:bin的范围
+		normed:若为True,直方图的值将进行归一化,形成概率密度
+		histtype:
+		    barstacked
+		    step
+		    stepfilled
+		align:
+		color:
+		orientation:
+		    orientation
+		    horizontal
+		'''
+		ax.hist(x, bins=35, color='r',normed=True,histtype='stepfilled')
+		ax.set_xlabel('Values')
+		ax.set_ylabel('Frequency')
+		ax.set_title(r'$\mathrm{Histogram:}\ \mu=%d,\ \sigma=%d$' % (mu, sigma))
+		plt.show()
+
+
+
+#==============================================================================
+#==============================================================================
+# 第4章 学习更多图表和定制化 99
+# 4．1 简介 99
+#==============================================================================
+
+
+#==============================================================================
+# 4．2 设置坐标轴标签的透明度和大小 100
+#==============================================================================
+4．2．1 准备工作 100
+4．2．2 操作步骤 100
+4．2．3 工作原理 101
+4．2．4 补充说明 102
+		import matplotlib.pyplot as plt
+		from matplotlib import patheffects
+		import numpy as np 
+		data = np.random.randn(70) 
+		fontsize = 18
+		plt.plot(data) 
+		title = "This is figure title";
+		x_label = "This is x axis label";y_label = "This is y axis label"
+		
+		title_text_obj = plt.title(title, fontsize=fontsize, verticalalignment='bottom') 
+		title_text_obj.set_path_effects([patheffects.withSimplePatchShadow()])
+		
+		'''customize shadow properties
+			offset_xy -- set the 'angle' of the shadow
+			shadow_rgbFace -- set the color of the shadow
+			patch_alpha -- setup the transparaency of the shadow
+			
+			亦可继承patheffects._Base类,并重写draw_path方法
+		'''
+		pe = patheffects.withSimplePatchShadow(
+		        offset_xy = (1, -1),
+		        shadow_rgbFace = (1.0,0.0,0.0),
+		        patch_alpha =  0.8)
+		# apply them to the xaxis and yaxis labels
+		xlabel_obj = plt.xlabel(x_label, fontsize=fontsize, alpha=0.5)
+		xlabel_obj.set_path_effects([pe])
+		
+		ylabel_obj = plt.ylabel(y_label, fontsize=fontsize, alpha=0.5)
+		ylabel_obj.set_path_effects([pe])
+		
+		plt.show()
+#==============================================================================
+# 4．3 为图表线条添加阴影 102
+#==============================================================================
+4．3．1 准备工作 103
+4．3．2 操作步骤 103
+4．3．3 工作原理 105
+4．3．4 补充说明 105
+		import numpy as np
+		import matplotlib.pyplot as plt
+		import matplotlib.transforms as transforms
+		
+		
+		def setup(layout=None):
+		    assert layout is not None 
+		    fig = plt.figure()
+		    ax = fig.add_subplot(layout)
+		    return fig, ax
+		
+		
+		def get_signal():
+		    t = np.arange(0., 2.5, 0.01)
+		    s = np.sin(5 * np.pi * t)
+		    return t, s  
+		def plot_signal(t, s):
+		    line, = axes.plot(t, s, linewidth=5, color='magenta')
+		    return line,
+		def make_shadow(fig, axes, line, t, s):
+		    delta = 2 / 72.  # how many points to move the shadow
+		    offset = transforms.ScaledTranslation(delta, -delta, fig.dpi_scale_trans)
+		    offset_transform = axes.transData + offset
+		
+		    # We plot the same data, but now using offset transform
+		    # zorder -- to render it below the line
+		    axes.plot(t, s, linewidth=5, color='gray',
+		              transform=offset_transform,
+		              zorder=0.5 * line.get_zorder())
+		
+		if __name__ == "__main__":
+		    fig,axes = setup(111)
+		    t, s = get_signal()
+		    line, = plot_signal(t, s) 
+		    make_shadow(fig, axes, line, t, s) 
+		    axes.set_title('Shadow effect using an offset transform')
+		    plt.show()
+
+
+
+#==============================================================================
+# 4．4 向图表添加数据表 106
+#==============================================================================
+4．4．1 准备工作 106
+4．4．2 操作步骤 106
+4．4．3 工作原理 107
+4．4．4 补充说明 107
+		import matplotlib.pylab as plt
+		import numpy as np
+		
+		plt.figure()
+		axes=plt.gca()
+		y= np.random.randn(9)
+		
+		col_labels=['col1','col2','col3']
+		row_labels=['row1','row2','row3']
+		table_vals=[[11,12,13],[21,22,23],[28,29,30]]
+		row_colors=['red','gold','green']
+		'''基本的函数签名
+		table(  cellText=None, cellColours=None,
+		        colWidths = None,
+		        rowLabels=None, rowColours=None, rowLoc='left'
+		        colLabels=None, colColours=None, rowLoc='left'
+		        loc='upper right', bbox=None)
+		'''
+		the_table = plt.table(cellText=table_vals,
+		                  colWidths = [0.1]*3,
+		                  rowLabels=row_labels,
+		                  colLabels=col_labels,
+		                  rowColours=row_colors,
+		                  loc='upper right')
+		plt.text(12,3.4,'Table Title',size=8)
+		
+		plt.plot(y)
+		plt.show()
+
+
+
+
+
+#==============================================================================
+# 4．5 使用subplots(子区) 108
+#==============================================================================
+4．5．1 准备工作 108
+4．5．2 操作步骤 108
+4．5．3 工作原理 110
+4．5．4 补充说明 110
+		import matplotlib.pyplot as plt
+		
+		plt.figure(0)
+		'''
+		    fig,ax = plt.subplots 创建普通布局的子区
+		    plt.subplots_adjust调整子区的布局
+		'''
+		axes1 = plt.subplot2grid((3, 3), (0, 0), colspan=3)
+		axes2 = plt.subplot2grid((3, 3), (1, 0), colspan=2)
+		axes3 = plt.subplot2grid((3, 3), (1, 2))
+		axes4 = plt.subplot2grid((3, 3), (2, 0))
+		axes5 = plt.subplot2grid((3, 3), (2, 1), colspan=2)
+		
+		# tidy up tick labels size
+		all_axes = plt.gcf().axes
+		for ax in all_axes:
+		    for ticklabel in ax.get_xticklabels() + ax.get_yticklabels():
+		        ticklabel.set_fontsize(10)
+		plt.suptitle("Demo of subplot2grid")
+		plt.show()
+
+#==============================================================================
+# 4．6 定制化网格 110
+#==============================================================================
+4．6．1准备工作 110
+4．6．2 操作步骤 112
+4．6．3 工作原理 114
+		import numpy as np
+		import matplotlib.pyplot as plt
+		from mpl_toolkits.axes_grid1 import ImageGrid
+		from matplotlib.cbook import get_sample_data
+		
+		 
+		
+		def get_grid(fig=None, layout=None, nrows_ncols=None):
+		    assert fig is not None;assert layout is not None;assert nrows_ncols is not None
+		    grid = ImageGrid(fig, layout, nrows_ncols=nrows_ncols, axes_pad=0.05, add_all=True, label_mode="L")
+		    return grid
+		
+		
+		def load_images_to_grid(grid, Z, *images):
+		    min,max = Z.min(),Z.max()
+		    for i, image in enumerate(images):
+		        axes = grid[i]
+		        axes.imshow(image, origin="lower", vmin=min, vmax=max,interpolation="nearest")
+		
+		if __name__ == "__main__":
+		    fig = plt.figure(1, (8, 6)) ;    grid = get_grid(fig, 111, (1, 3))
+		     # z is a numpy array of 15x15 
+		    Z = np.load(get_sample_data("axes_grid/bivariate_normal.npy", asfileobj=False)) 
+		    # Slice image
+		    image1 = Z ;    image2 = Z[:, :10];    image3 = Z[:, 10:]
+		    load_images_to_grid(grid, Z, image1, image2, image3)
+		    plt.draw()
+		    plt.show()
+
+#==============================================================================
+# 4．7 创建等高线图 114
+#==============================================================================
+4．7．1 准备工作 114
+4．7．2 操作步骤 115
+4．7．3 工作原理 117	
+			import numpy as np
+			import matplotlib as mpl
+			import matplotlib.pyplot as plt
+			 
+			'''
+			等高线显示的是矩阵的等值线isolines
+			等值线是用数值相等的各点连成的曲线
+			'''
+			x = np.arange(-1.5, 1.5, 0.1)
+			y = np.arange(-1.5, 1.5, 0.1)
+			
+			X, Y = np.meshgrid(x, y)# Make grids of points
+			Z = (1 - (X ** 2 + Y ** 2)) * np.exp(-Y ** 3 / 3)
+			N = np.arange(-1, 1, 0.5)# Number of isolines
+			'''
+			    contour()
+			    contour(Z)  绘制Z数组的等高线,自动选择水平值
+			    contour(Z,N) 水平数由N指定,自动选择水平值
+			    contour(Z,V) 绘制Z数组的等高线,水平值在V中指定
+			    
+			    contour(X,Y,Z) 绘制X、Y和Z的等高线.X和Y数组为(x,y)平面坐标(surface coordinates)
+			    contour(X,Y,Z,N)
+			'''
+			CS = plt.contour(Z, N, linewidths=2, cmap=mpl.cm.jet)
+			plt.clabel(CS, inline=True, fmt='%1.1f', fontsize=10)
+			plt.colorbar(CS)
+			
+			plt.title('My function: $z=(1-x^2+y^2) e^{-(y^3)/3}$')
+			plt.show()
+
+#==============================================================================
+# 4．8 填充图表底层区域 117
+#==============================================================================
+4．8．1 准备工作 118
+4．8．2 操作步骤 118
+4．8．3 工作原理 120
+		import matplotlib.pyplot as plt
+		import numpy as np
+		from math import sqrt 
+		t =range(1000)
+		y = [sqrt(i) for i in t]
+		plt.plot(t,y,color='red',lw=2)
+		plt.fill_between(t,y,color='silver')
+		plt.show()
+		
+----------------------------------------------
+		import matplotlib.pyplot as plt
+		import numpy as np
+		from math import sqrt
+		
+		x = np.arange(0.0, 2, 0.01)
+		y1 = np.sin(np.pi*x)
+		y2 = 1.7*np.sin(4*np.pi*x)
+		
+		fig = plt.figure()
+		axes1 = fig.add_subplot(211)
+		axes1.plot(x, y1, x, y2, color='grey')
+		axes1.fill_between(x, y1, y2, where=y2<=y1, facecolor='blue', interpolate=True)
+		axes1.fill_between(x, y1, y2, where=y2>=y1, facecolor='gold', interpolate=True)
+		axes1.set_title('Blue where y2 <= y1. Gold-color where y2 >= y1.')
+		axes1.set_ylim(-2,2)
+		
+		#屏蔽数组中给定值的所有值
+		y2 = np.ma.masked_greater(y2, 1.0) 
+		axes2 = fig.add_subplot(212, sharex=axes1)
+		axes2.plot(x, y1, x, y2, color='black')
+		axes2.fill_between(x, y1, y2, where=y2<=y1, facecolor='blue', interpolate=True)
+		axes2.fill_between(x, y1, y2, where=y2>=y1, facecolor='gold', interpolate=True)
+		axes2.set_title('Same as above, but mask')
+		axes2.set_ylim(-2,2)
+		axes2.grid('on')
+		
+		plt.show()
+		
+
+#==============================================================================
+# 4．9 绘制极线图 121
+#==============================================================================
+4．9．1 准备工作 121
+4．9．2 操作步骤 121
+4．9．3 工作原理 123
+		import numpy as np
+		import matplotlib.cm as cm
+		import matplotlib.pyplot as plt
+		
+		figsize = 7; N = 18 
+		colormap = lambda r: cm.Set2(r / 20.)
+		# number of bars 
+		fig = plt.figure(figsize=(figsize,figsize))
+		ax = fig.add_axes([0.2, 0.2, 0.7, 0.7], polar=True)
+		
+		theta = np.arange(0.0, 2 * np.pi, 2 * np.pi/N)#角度theta集合
+		radii = 20 * np.random.rand(N)          #极线距离
+		width = np.pi / 4 * np.random.rand(N)   #每个极线条的宽度集合
+		bars = ax.bar(theta, radii, width=width, bottom=0.0)
+		
+		for r, bar in zip(radii, bars):
+		    bar.set_facecolor(colormap(r))
+		    bar.set_alpha(0.6)
+		
+		plt.show()
+#==============================================================================
+# 4．10 使用极线条可视化文件系统树 123
+#==============================================================================
+4．10．1 准备工作 123
+4．10．2 操作步骤 123
+4．10．3 工作原理 126
+			import os
+			import sys 
+			import matplotlib.pyplot as plt
+			import matplotlib.cm as cm
+			import numpy as np 
+			
+			def build_folders(start_path):
+			    folders = [] 
+			    for each in get_directories(start_path):
+			        size = get_size(each)
+			        if size >= 25 * 1024 * 1024:
+			            folders.append({'size': size, 'path': each})
+			
+			    for each in folders:
+			        print "Path: " + os.path.basename(each['path'])
+			        print "Size: " + str(each['size'] / 1024 / 1024) + " MB" 
+			    return folders
+			
+			
+			def get_size(path):
+			    assert path is not None 
+			    total_size = 0
+			    for dirpath, dirnames, filenames in os.walk(path):
+			        for f in filenames:
+			            fp = os.path.join(dirpath, f)
+			            try:
+			                size = os.path.getsize(fp)
+			                total_size += size
+			                #print "Size of '{0}' is {1}".format(fp, size)
+			            except OSError as err:
+			                print str(err)
+			                pass
+			    return total_size
+			
+			
+			def get_directories(path):
+			    dirs = set()
+			    for dirpath, dirnames, filenames in os.walk(path):
+			        dirs = set([os.path.join(dirpath, x) for x in dirnames])
+			        break  # we just want the first one
+			    return dirs
+			
+			
+			def draw(folders):
+			    """ Draw folder size for given folder"""
+			    figsize = (8, 8)  # keep the figure square
+			    ldo, rup = 0.1, 0.8  # left down, right up coordinates, normalized
+			    fig = plt.figure(figsize=figsize)
+			    ax = fig.add_axes([ldo, ldo, rup, rup], polar=True)
+			
+			    # transform data
+			    x = [os.path.basename(x['path']) for x in folders]
+			    y = [y['size'] / 1024 / 1024 for y in folders]
+			    theta = np.arange(0.0, 2 * np.pi, 2 * np.pi / len(x))
+			    radii = y
+			
+			    bars = ax.bar(theta, radii)
+			    middle = 90 / len(x)
+			    theta_ticks = [t * (180 / np.pi) + middle for t in theta]
+			    lines, labels = plt.thetagrids(theta_ticks, labels=x, frac=0.5)
+			    for step, each in enumerate(labels):
+			        each.set_rotation(theta[step] * (180 / np.pi) + middle)
+			        each.set_fontsize(8)
+			
+			    # configure bars
+			    colormap = lambda r: cm.Set2(r / len(x))
+			    for r, each in zip(radii, bars):
+			        each.set_facecolor(colormap(r))
+			        each.set_alpha(0.5)
+			
+			    plt.show()
+			
+			if __name__ == '__main__':
+			    if len(sys.argv) is not 2:
+			        print "ERROR: Please supply path to folder."
+			        sys.exit(-1)
+			
+			    start_path = sys.argv[1]
+			
+			    if not os.path.exists(start_path):
+			        print "ERROR: Path must exits."
+			        sys.exit(-1)
+			
+			    folders = build_folders(start_path)
+			    if len(folders) < 1:
+			        print "ERROR: Path does not contain any folders."
+			        sys.exit(-1)
+			
+			    draw(folders)
+
+
+
+#==============================================================================
+# 第5章 创建3D可视化图表 129
+# 5．1 简介 129
+#==============================================================================
+#==============================================================================
+# 5．2 创建3D柱状图 129
+#==============================================================================
+5．2．1 准备工作 130
+5．2．2 操作步骤 130
+5．2．3 工作原理 132
+5．2．4 补充说明 132 
+		import random 
+		import numpy as np
+		import matplotlib as mpl
+		import matplotlib.pyplot as plt
+		import matplotlib.dates as mdates 
+		from mpl_toolkits.mplot3d import Axes3D
+		
+		mpl.rcParams['font.size'] = 10
+		
+		fig = plt.figure()
+		ax = fig.add_subplot(111, projection='3d')
+		
+		for z in [2011, 2012, 2013, 2014]:
+		    xs = xrange(1,13)
+		    ys = 1000 * np.random.rand(12)
+		    
+		    color = plt.cm.Set2(random.choice(xrange(plt.cm.Set2.N)))
+		    ax.bar(xs, ys, zs=z, zdir='y', color=color, alpha=0.8)
+		
+		ax.xaxis.set_major_locator(mpl.ticker.FixedLocator(xs))
+		ax.yaxis.set_major_locator(mpl.ticker.FixedLocator(ys))
+		
+		ax.set_xlabel('Month')
+		ax.set_ylabel('Year')
+		ax.set_zlabel('Sales Net [usd]')
+		
+		plt.show()
+------------------------------------------------
+		from mpl_toolkits.mplot3d import Axes3D
+		from matplotlib import cm
+		import matplotlib.pyplot as plt
+		import numpy as np
+		
+		n_angles = 36
+		n_radii = 8 
+		
+		radii = np.linspace(0.125, 1.0, n_radii)
+		
+		angles = np.linspace(0, 2 * np.pi, n_angles, endpoint=False)
+		angles = np.repeat(angles[..., np.newaxis], n_radii, axis=1)
+		
+		# Convert polar (radii, angles) coords to cartesian (x, y) coords
+		# (0, 0) is added here. There are no duplicate points in the (x, y) plane
+		x = np.append(0, (radii * np.cos(angles)).flatten())
+		y = np.append(0, (radii * np.sin(angles)).flatten())
+		
+		# Pringle surface
+		z = np.sin(-x * y)
+		
+		fig = plt.figure()
+		ax = fig.gca(projection='3d')
+		
+		ax.plot_trisurf(x, y, z, cmap=cm.jet, linewidth=0.2)
+		
+		plt.show()
+
+
+#==============================================================================
+# 5．3 创建3D直方图 133
+#==============================================================================
+5．3．1 准备工作 134
+5．3．2 操作步骤 134
+5．3．3 工作原理 135
+		import numpy as np
+		import matplotlib.pyplot as plt
+		import matplotlib as mpl
+		
+		from mpl_toolkits.mplot3d import Axes3D
+		mpl.rcParams['font.size'] = 10 
+		
+		x = np.random.normal(5, 1,  25)
+		y = np.random.normal(3, .5,  25)
+		
+		fig = plt.figure()
+		
+		ax = fig.add_subplot(211, projection='3d') 
+		hist, xedges, yedges = np.histogram2d(x, y, bins=10)
+		
+		xpos, ypos = np.meshgrid(xedges[:-1]+.25, yedges[:-1]+.25)
+		xpos = xpos.flatten()
+		ypos = ypos.flatten()
+		zpos = np.zeros((len(xedges) - 1) * (len(yedges) - 1)) 
+		dx = .1 * np.ones_like(zpos)
+		dy = dx.copy()
+		dz = hist.flatten() 
+		ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color='b', alpha=0.4)
+		ax.set_xlabel('X Axis')
+		ax.set_ylabel('Y Axis')
+		ax.set_zlabel('Z Axis')
+		 
+		ax2 = fig.add_subplot(212)
+		ax2.scatter(x, y)
+		ax2.set_xlabel('X Axis')
+		ax2.set_ylabel('Y Axis')
+		
+		plt.show()
+
+#==============================================================================
+# 5．4 在matplotlib中创建动画 136
+#==============================================================================
+5．4．1 准备工作 136
+5．4．2 操作步骤 137
+5．4．3 工作原理 138
+5．4．4 补充说明 139
+		import numpy as np
+		from matplotlib import pyplot as plt
+		from matplotlib import animation
+		
+		fig = plt.figure()
+		ax = plt.axes(xlim=(0, 2), ylim=(-2, 2))
+		line, = ax.plot([], [], lw=2)
+		
+		def init(): 
+		    line.set_data([], [])
+		    return line,
+		def animate(i): 
+		    x = np.linspace(0, 2, 1000)
+		    y = np.sin(2 * np.pi * (x - 0.01 * i)) * np.cos(22 * np.pi * (x - 0.01 * i))
+		    line.set_data(x, y)
+		    return line, 
+		animator = animation.FuncAnimation(fig, animate, init_func=init, frames=200, interval=20, blit=True)
+
+		animator.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'], writer='ffmpeg_file')
+		plt.show()
+--------------------------------------------------------
+		
+		import numpy as np
+		import matplotlib.pyplot as plt
+		import matplotlib.animation as animation
+		
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		
+		x = np.arange(0, 2*np.pi, 0.01)        # x-array
+		line, = ax.plot(x, np.sin(x))
+		
+		def animate(i):
+		    line.set_ydata(np.sin(x+i/10.0))  # update the data
+		    return line,
+		
+		#Init only required for blitting to give a clean slate.
+		def init():
+		    line.set_ydata(np.ma.array(x, mask=True))
+		    return line,
+		
+		ani = animation.FuncAnimation(fig, animate, np.arange(1, 200), init_func=init,
+		    interval=25, blit=True)
+		plt.show()
+
+#==============================================================================
+# 5．5 用OpenGL制作动画 139
+#==============================================================================
+5．5．1 准备工作 140
+5．5．2 操作步骤 141
+5．5．3 工作原理 142
+5．5．4 补充说明 142 
+
+#==============================================================================
+# 第6章 用图像和地图绘制图表 145
+# 6．1 简介 145
+#==============================================================================
+
+#==============================================================================
+# 6．2 用PIL做图像处理 146
+#==============================================================================
+6．2．1 准备工作 146
+6．2．2 操作步骤 149
+6．2．3 工作原理 151
+6．2．4 补充说明 151
+		import os
+		import sys
+		from PIL import Image, ImageChops, ImageFilter		
+		'''
+		Image 模块
+		    im = Image.open(filename) 
+		    im.crop(box)
+		    im.filter(filter)
+		    im.histogram()
+		    im.resize(size,filter)
+		    im.rotate(angle,filter)
+		    im.split()
+		    im.transform(size,method,data,filter)
+		ImageDraw模块
+		ImageChops模块
+		ImageFilter模块 
+		'''
+		
+		class DemoPIL(object):
+		    def __init__(self, image_file=None):
+		        self.fixed_filters = [ff for ff in dir(ImageFilter) if ff.isupper()]
+		
+		        assert image_file is not None
+		        assert os.path.isfile(image_file) is True
+		        self.image_file = image_file
+		        
+		        self.image = Image.open(self.image_file)
+		
+		    def run_fixed_filters_demo(self):
+		        self._make_temp_dir()
+		        for ffilter in self.fixed_filters:
+		            temp_img = self.apply_filter(ffilter)
+		            temp_img.save(self._get_temp_name(ffilter))
+		        print "Images are in: {0}".format((self.ff_tempdir),)
+		
+		    def _make_temp_dir(self):
+		        from tempfile import mkdtemp
+		        self.ff_tempdir = mkdtemp(prefix="ff_demo")
+		
+		    def _get_temp_name(self, filter_name):
+		        name, ext = os.path.splitext(os.path.basename(self.image_file))
+		        newimage_file = name + "-" + filter_name + ext
+		        path = os.path.join(self.ff_tempdir, newimage_file)
+		        return path
+		
+		    def _get_filter(self, filter_name):
+		        real_filter = eval("ImageFilter." + filter_name)
+		        return real_filter
+		
+		    def apply_filter(self, filter_name):
+		        print "Applying filter: " + filter_name
+		        filter_callable = self._get_filter(filter_name)
+		        # prevent calling non-fixed filters for now
+		        if filter_name in self.fixed_filters:
+		            temp_img = self.image.filter(filter_callable)
+		        else:
+		            print "Can't apply non-fixed filter now."
+		        return temp_img
+		
+		if __name__ == "__main__":
+		    assert len(sys.argv) == 2
+		    demo_image = "images/sunset.jpg"
+		    demo = DemoPIL(demo_image)
+		    # will create set of images in temporary folder
+		    demo.run_fixed_filters_demo()
+------------------------------------------------------------------------
+		import os
+		import sys
+		from math import floor
+		from PIL import Image
+		
+		
+		class Thumbnailer(object):
+		    def __init__(self, src_folder=None):
+		        self.src_folder = src_folder
+		        self.ratio = .3
+		        self.thumbnail_folder = "thumbnails"
+		
+		    def _create_thumbnails_folder(self):
+		        thumb_path = os.path.join(self.src_folder, self.thumbnail_folder)
+		        if not os.path.isdir(thumb_path): os.makedirs(thumb_path)
+		
+		    def _build_thumb_path(self, image_path):
+		        root = os.path.dirname(image_path)
+		        name, ext = os.path.splitext(os.path.basename(image_path)) 
+		        return os.path.join(root, self.thumbnail_folder, name + ".thumbnail" + ext)
+		
+		    def _load_files(self):
+		        files = set()
+		        for each in os.listdir(self.src_folder):
+		            each = os.path.abspath(self.src_folder + '/' + each)
+		            if os.path.isfile(each): files.add(each)
+		        return files
+		
+		    def _thumb_size(self, size):
+		        return (int(size[0] * self.ratio), int(size[1] * self.ratio))
+		
+		    def create_thumbnails(self):
+		        self._create_thumbnails_folder()
+		        files = self._load_files()
+		
+		        for each in files:
+		            print "Processing: " + each
+		            try:
+		                img = Image.open(each)
+		                thumb_size = self._thumb_size(img.size)
+		                resized = img.resize(thumb_size, Image.ANTIALIAS)
+		                savepath = self._build_thumb_path(each)
+		                resized.save(savepath)
+		            except IOError as ex:
+		                print "Error: " + str(ex)
+		
+		if __name__ == "__main__": 
+		    src_folder =  "images"  
+		    thumbs = Thumbnailer(src_folder) 
+		    # optionally set the name of thumbnail folder inside *src_folder*.
+		    thumbs.thumbnail_folder = "THUMBS" 
+		    # define ratio to resize image to
+		    # 0.1 means the original image will be resized to 10% of its size
+		    thumbs.ratio = 0.1  
+		    # will create set of images in temporary folder
+		    thumbs.create_thumbnails()
+
+#==============================================================================
+# 6．3 绘制带图像的图表 151
+#==============================================================================
+6．3．1 准备工作 152
+6．3．2 操作步骤 152
+6．3．3 工作原理 154
+			import matplotlib.pyplot as plt
+			from matplotlib._png import read_png
+			from matplotlib.offsetbox import TextArea, OffsetImage, AnnotationBbox
+			
+			
+			def load_data():
+			    import csv
+			    with open('pirates_temperature.csv', 'r') as f:
+			        reader = csv.reader(f)
+			        header = reader.next()
+			        datarows = []
+			        for row in reader: datarows.append(row)
+			    return header, datarows
+			
+			
+			def format_data(datarows):
+			    years, temps, pirates = [], [], []
+			    for each in datarows:
+			        years.append(each[0])
+			        temps.append(each[1])
+			        pirates.append(each[2])
+			    return years, temps, pirates
+			
+			if __name__ == "__main__":
+			    fig = plt.figure(figsize=(16,8))
+			    ax = plt.subplot(111)  # add sub-plot
+			
+			    header, datarows = load_data()
+			    xlabel, ylabel, _ = header
+			    years, temperature, pirates = format_data(datarows)
+			    title = "Global Average Temperature vs. Number of Pirates"
+			
+			    plt.plot(years, temperature, lw=2)
+			    plt.xlabel(xlabel)
+			    plt.ylabel(ylabel)    
+			    
+			    # for every data point annotate with image and number
+			    for x in xrange(len(years)): 
+			        xy = years[x], temperature[x]  # current data coordinate
+			        ax.plot(xy[0], xy[1], "ok") # add image 
+			        pirate = read_png('tall-ship.png') # load pirate image  
+			        zoomc = int(pirates[x]) * (1 / 90000.) # zoom coefficient (move image with size)  
+			        imagebox = OffsetImage(pirate, zoom=zoomc)# create OffsetImage 
+			
+			        '''
+			        ImageBox:必须是一个OffsetBox实例
+			        xy:与注解关联的数据点坐标
+			        xybox:指定注解框的位置
+			        xycoords:指定xy使用的坐标系统
+			        boxcoords:指定xybox使用的坐标系统
+			        pad:指定内边距
+			        arrowprops:绘制注解边框与数据点的连接箭头的属性字典
+			        '''
+			        ab = AnnotationBbox(imagebox, xy,
+			                xybox=(-200.*zoomc, 200.*zoomc),
+			                xycoords='data',
+			                boxcoords="offset points",
+			                pad=0.1,
+			                arrowprops=dict(arrowstyle="->",  connectionstyle="angle,angleA=0,angleB=-30,rad=3")
+			                )
+			        ax.add_artist(ab)
+			
+			        # add text
+			        no_pirates = TextArea(pirates[x], minimumdescent=False)
+			        ab = AnnotationBbox(no_pirates, xy,
+			                    xybox=(50., -25.),
+			                    xycoords='data',
+			                    boxcoords="offset points",
+			                    pad=0.3,
+			                    arrowprops=dict(arrowstyle="->",
+			                        connectionstyle="angle,angleA=0,angleB=-30,rad=3")
+			                    )
+			        ax.add_artist(ab)
+			
+			    plt.grid(1)
+			    plt.xlim(1800, 2020)
+			    plt.ylim(14, 16)
+			    plt.title(title)
+			    plt.show()
+
+#==============================================================================
+# 6．4 在具有其他图形的图表中显示图像 156
+#==============================================================================
+6．4．1 准备工作 156
+6．4．2 操作步骤 156
+6．4．3 工作原理 158
+6．4．4 补充说明 159
+			import matplotlib.pyplot as plt
+			import matplotlib.image as mplimage
+			import matplotlib as mpl
+			import os
+			
+			
+			class ImageViewer(object):
+			    def __init__(self, imfile):
+			        self._load_image(imfile)
+			        self._configure()
+			
+			        self.figure = plt.gcf()
+			        t = "Image: {0}".format(os.path.basename(imfile))
+			        self.figure.suptitle(t, fontsize=20)
+			
+			        self.shape = (3, 2)
+			
+			    def _configure(self):
+			        mpl.rcParams['font.size'] = 10
+			        mpl.rcParams['figure.autolayout'] = False
+			        mpl.rcParams['figure.figsize'] = (9, 6)
+			        mpl.rcParams['figure.subplot.top'] = .9
+			
+			    def _load_image(self, imfile):
+			        self.im = mplimage.imread(imfile)
+			
+			    @staticmethod
+			    def _get_chno(ch):
+			        chmap = {'R': 0, 'G': 1, 'B': 2}
+			        return chmap.get(ch, -1)
+			
+			    def show_channel(self, ch):
+			        bins = 256
+			        ec = 'none'
+			        chno = self._get_chno(ch)
+			        loc = (chno, 1)
+			        ax = plt.subplot2grid(self.shape, loc)
+			        ax.hist(self.im[:, :, chno].flatten(), bins, color=ch, ec=ec,\
+			                label=ch, alpha=.7)
+			        ax.set_xlim(0, 255)
+			        plt.setp(ax.get_xticklabels(), visible=True)
+			        plt.setp(ax.get_yticklabels(), visible=False)
+			        plt.setp(ax.get_xticklines(), visible=True)
+			        plt.setp(ax.get_yticklines(), visible=False)
+			        plt.legend()
+			        plt.grid(True, axis='y')
+			        return ax
+			
+			    def show(self):
+			        loc = (0, 0)
+			        axim = plt.subplot2grid(self.shape, loc, rowspan=3)
+			        axim.imshow(self.im)
+			        plt.setp(axim.get_xticklabels(), visible=False)
+			        plt.setp(axim.get_yticklabels(), visible=False)
+			        plt.setp(axim.get_xticklines(), visible=False)
+			        plt.setp(axim.get_yticklines(), visible=False)
+			
+			        axr = self.show_channel('R')
+			        axg = self.show_channel('G')
+			        axb = self.show_channel('B')
+			
+			        plt.show()
+			
+			if __name__ == '__main__':
+			    im = 'images/yellow_flowers.jpg'
+			    try: 
+			        iv = ImageViewer(im)
+			        iv.show()
+			    except Exception as ex:
+			        print ex
+#==============================================================================
+# 6．5 使用Basemap在地图上绘制数据
+#==============================================================================
+http://matplotlib.org/basemap/users/examples.html
+Windows
+	https://sourceforge.net/projects/matplotlib/files/matplotlib-toolkits/basemap-1.0.2/
+	
+			注册表中注册Python
+			------------------------------
+			import sys
+			from _winreg import *
+			
+			# tweak as necessary 
+			version = sys.version[:3] 
+			installpath = sys.prefix  
+			regpath = "SOFTWARE\\Python\\Pythoncore\\%s\\" % (version)
+			installkey = "InstallPath"
+			pythonkey = "PythonPath"
+			pythonpath = "%s;%s\\Lib\\;%s\\DLLs\\" % (
+			installpath, installpath, installpath
+			)
+			
+			def RegisterPy():
+			    print "begin RegisterPy "
+			    try:
+			        print "open key : %s"%regpath
+			        reg = OpenKey(HKEY_CURRENT_USER, regpath)
+			    except EnvironmentError as e:    
+			        try:           
+			            reg = CreateKey(HKEY_CURRENT_USER, regpath) 
+			            SetValue(reg, installkey, REG_SZ, installpath) 
+			            SetValue(reg, pythonkey, REG_SZ, pythonpath)
+			            CloseKey(reg) 
+			        except: 
+			            print "*** EXCEPT: Unable to register!" 
+			            return             
+			        
+			        print "--- Python", version, "is now registered!" 
+			        return
+			
+			   
+			    if (QueryValue(reg, installkey) == installpath and 
+			        QueryValue(reg, pythonkey) == pythonpath): 
+			            CloseKey(reg) 
+			            print "=== Python", version, "is already registered!" 
+			            return CloseKey(reg) 
+			
+			    print "*** ERROR:Unable to register!" 
+			    print "*** REASON:You probably have another Python installation!"
+			
+			def UnRegisterPy():
+			    #print "begin UnRegisterPy "
+			    try:
+			        print "open HKEY_CURRENT_USER key=%s"%(regpath)
+			        reg = OpenKey(HKEY_CURRENT_USER, regpath)
+			        #reg = OpenKey(HKEY_LOCAL_MACHINE, regpath)
+			    except EnvironmentError:  
+			        print "*** Python not registered?!"
+			        return
+			    try:
+			       DeleteKey(reg, installkey)
+			       DeleteKey(reg, pythonkey)
+			       DeleteKey(HKEY_LOCAL_MACHINE, regpath)
+			    except:
+			       print "*** Unable to un-register!"
+			    else:
+			       print "--- Python", version, "is no longer registered!"            
+			
+			if __name__ == "__main__":  
+			    RegisterPy()
+
+---------------------------------------------------------------------------------------
+			
+Linux
+		https://github.com/matplotlib/basemap
+		进入 GEOS 子目录
+		./configure --enable-python
+		make
+		sudo make install 
+		回到顶级目录
+		sudo python setup.py install 
+ ----------------------------------------------------
+			from mpl_toolkits.basemap import Basemap
+			import matplotlib.pyplot as plt
+			import numpy as np
+			
+			map = Basemap(projection='merc', resolution = 'h', area_thresh = 0.1,
+			              llcrnrlon=-126.619875, llcrnrlat=31.354158,
+			              urcrnrlon=-59.647219, urcrnrlat=47.517613)
+			  
+			map.drawcoastlines()
+			map.drawcountries()
+			map.fillcontinents(color='coral', lake_color='aqua')
+			map.drawmapboundary(fill_color='aqua')
+			map.drawmeridians(np.arange(0, 360, 30))
+			map.drawparallels(np.arange(-90, 90, 30))
+			
+			plt.title('Cities in USA') 
+			
+			plt.show()
+----------------------------------------------------------------
+		from mpl_toolkits.basemap import Basemap
+		import matplotlib.pyplot as plt
+		import numpy as np
+		
+		map = Basemap(projection='merc', 
+		              resolution = 'h', 
+		              area_thresh = 100,
+		    llcrnrlon=-126.619875, llcrnrlat=25,
+		    urcrnrlon=-59.647219, urcrnrlat=55)
+		 
+		shapeinfo = map.readshapefile('cities','cities')
+		
+		x, y = zip(*map.cities)
+		
+		# build a list of US cities
+		city_names = []
+		for each in map.cities_info:
+		    if each['COUNTRY'] != 'US':
+		        city_names.append("")
+		    else:
+		        city_names.append(each['NAME'])
+		
+		map.drawcoastlines()
+		map.drawcountries()
+		map.fillcontinents(color='coral', lake_color='aqua')
+		map.drawmapboundary(fill_color='aqua')
+		map.drawmeridians(np.arange(0, 360, 30))
+		map.drawparallels(np.arange(-90, 90, 30))
+		
+		# draw city markers
+		map.scatter(x,y,25, marker='o',zorder=10)
+		
+		# plot labels at City coords.
+		for city_label, city_x, city_y in zip(city_names, x, y):
+		    plt.text(city_x, city_y, city_label)
+		
+		plt.title('Cities in USA') 
+		
+		plt.show()
+#==============================================================================
+# 6.6 使用Google MapAPI在地图上绘制数据
+#==============================================================================
+https://github.com/google/google-visualization-python
+
+		import csv
+		import gviz_api
+		
+		def get_page_template():
+		    page_template = """
+		    <html>
+		      <script src="https://www.google.com/jsapi" type="text/javascript"></script>
+		      <script>
+		        google.load('visualization', '1', {packages:['geochart', 'table']}); 
+		        google.setOnLoadCallback(drawMap);
+		        function drawMap() {
+		            var json_data = new google.visualization.DataTable(%s, 0.6); 
+		            var options = {colorAxis: {colors: ['#eee', 'green']}};
+		            var mymap = new google.visualization.GeoChart(document.getElementById('map_div'));
+		            mymap.draw(json_data, options);
+		            
+		            var mytable = new google.visualization.Table(document.getElementById('table_div'));
+		            mytable.draw(json_data, {showRowNumber: true})
+		        }
+		      </script>
+		      <body>
+		        <H1>Median Monthly Disposable Salary World Countries</H1> 
+		        <div id="map_div"></div>
+		        <hr />
+		        <div id="table_div"></div> 
+		        <div id="source">
+		            <hr />
+		            <small>
+		                 Source:  <a href="http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=EUR&itemId=105">
+		                 http://www.numbeo.com/cost-of-living/prices_by_country.jsp?displayCurrency=EUR&itemId=105 </a>
+		            </small>
+		        </div>
+		      </body>
+		    </html>
+		    """
+		    return page_template
+		
+		
+		def main():
+		    # Load data from CVS file
+		    afile = "median-dpi-countries.csv"
+		    datarows = []
+		    with open(afile, 'r') as f:
+		        reader = csv.reader(f)
+		        reader.next()  # skip header
+		        for row in reader:
+		            datarows.append(row)
+		
+		    # Describe data
+		    description = {"country": ("string", "Country"), "dpi": ("number", "EUR"), }
+		
+		    data = []
+		    for each in datarows:
+		        data.append({"country": each[0], "dpi": (float(each[1]), each[1])}) 
+		    data_table = gviz_api.DataTable(description)
+		    data_table.LoadData(data) 
+		    json = data_table.ToJSon(columns_order=("country", "dpi"), order_by="country", )
+		    
+		    # Put JSON string into the template and save to output.html
+		    with open('output.html', 'w') as out:
+		        out.write(get_page_template() % (json,))
+		
+		if __name__ == '__main__':
+		    main()
+		    
+#==============================================================================
+# 6.7 生成CAPTCHA图像
+#==============================================================================
+		from PIL import Image, ImageDraw, ImageFont
+		import random
+		import string
+		
+		
+		class SimpleCaptchaException(Exception):
+		    pass
+		class SimpleCaptcha(object):
+		    def __init__(self, length=5, size=(200, 100), fontsize=36,random_text=None, random_bgcolor=None):
+		        self.size = size
+		        self.text = "CAPTCHA"
+		        self.fontsize = fontsize
+		        self.bgcolor = 255
+		        self.length = length
+		
+		        self.image = None  # current captcha image
+		        if random_text: self.text = self._random_text()
+		        if not self.text: raise SimpleCaptchaException("Field text must not be empty.")
+		        if not self.size: raise SimpleCaptchaException("Size must not be empty.")
+		        if not self.fontsize: raise SimpleCaptchaException("Font size must be defined.")
+		        if random_bgcolor: self.bgcolor = self._random_color()
+		
+		    def _center_coords(self, draw, font):
+		        width, height = draw.textsize(self.text, font)
+		        xy = (self.size[0] - width) / 2., (self.size[1] - height) / 2.
+		        return xy
+		
+		    def _add_noise_dots(self, draw):
+		        size = self.image.size
+		        for _ in range(int(size[0] * size[1] * 0.1)):
+		            draw.point((random.randint(0, size[0]), random.randint(0, size[1])), fill="white")
+		        return draw
+		
+		    def _add_noise_lines(self, draw):
+		        size = self.image.size
+		        for _ in range(8):
+		            width = random.randint(1, 2)
+		            start = (0, random.randint(0, size[1] - 1))
+		            end = (size[0], random.randint(0, size[1] - 1))
+		            draw.line([start, end], fill="white", width=width)
+		        for _ in range(8):
+		            start = (-50, -50)
+		            end = (size[0] + 10, random.randint(0, size[1] + 10))
+		            draw.arc(start + end, 0, 360, fill="white")
+		        return draw
+		
+		    def get_captcha(self, size=None, text=None, bgcolor=None):
+		        if text is not None: self.text = text
+		        if size is not None: self.size = size
+		        if bgcolor is not None: self.bgcolor = bgcolor 
+		        self.image = Image.new('RGB', self.size, self.bgcolor)
+		        font = ImageFont.truetype('fonts/Vera.ttf', self.fontsize)
+		        draw = ImageDraw.Draw(self.image)
+		        xy = self._center_coords(draw, font)
+		        draw.text(xy=xy, text=self.text, font=font) 
+		        draw = self._add_noise_dots(draw) # Add some noise
+		        draw = self._add_noise_lines(draw)# Add some random lines 
+		        self.image.show()
+		        return self.image, self.text
+		
+		    def _random_text(self):
+		        letters = string.ascii_lowercase + string.ascii_uppercase
+		        random_text = ""
+		        for _ in range(self.length): random_text += random.choice(letters)
+		        return random_text
+		
+		    def _random_color(self):
+		        r = random.randint(0, 255)
+		        g = random.randint(0, 255)
+		        b = random.randint(0, 255)
+		        return (r, g, b)
+		
+		if __name__ == "__main__":
+		    sc = SimpleCaptcha(length=7, fontsize=36, random_text=True, random_bgcolor=True)
+		    sc.get_captcha()
+
+
+
+#==============================================================================
+# 第七章 使用正确的图表理解数据
+# 7.1 简介
+#==============================================================================
+#==============================================================================
+# 7.2 理解对数图
+#==============================================================================
+			from matplotlib import pyplot as plt
+			import numpy as np
+			'''
+			根据经验,以下情况使用对数标度：
+			1.当要展示的数据的值跨越好几个量级时
+			2.当要展示的数据有朝向大值(一些数据点比其他数据大很多)的倾斜度。
+			3.当要展示变化率(增长率),而不是值的变化
+			'''
+			x = np.linspace(1, 10)
+			y = [10 ** el for el in x]  #
+			z = [2 * el for el in x]    
+			
+			fig = plt.figure(figsize=(10, 8))
+			
+			ax1 = fig.add_subplot(2, 2, 1)
+			ax1.plot(x, y, color='blue')
+			ax1.set_yscale('log')   #对数标度
+			ax1.set_title(r'Logarithmic plot of $ {10}^{x} $ ')
+			ax1.set_ylabel(r'$ {y} = {10}^{x} $')
+			plt.grid(b=True, which='both', axis='both')
+			
+			
+			ax2 = fig.add_subplot(2, 2, 2)
+			ax2.plot(x, y, color='red')
+			ax2.set_yscale('linear')    #线性标度
+			ax2.set_title(r'Linear plot of $ {10}^{x} $ ')
+			ax2.set_ylabel(r'$ {y} = {10}^{x} $')
+			plt.grid(b=True, which='both', axis='both')
+			
+			
+			ax3 = fig.add_subplot(2, 2, 3)
+			ax3.plot(x, z, color='green')
+			ax3.set_yscale('log')  #对数标度
+			ax3.set_title(r'Logarithmic plot of $ {2}*{x} $ ')
+			ax3.set_ylabel(r'$ {y} = {2}*{x} $')
+			plt.grid(b=True, which='both', axis='both')
+			
+			ax4 = fig.add_subplot(2, 2, 4)
+			ax4.plot(x, z, color='magenta')
+			ax4.set_yscale('linear')    #线性标度
+			ax4.set_title(r'Linear plot of $ {2}*{x} $ ')
+			ax4.set_ylabel(r'$ {y} = {2}*{x} $')
+			plt.grid(b=True, which='both', axis='both') 
+			plt.show()
+#==============================================================================
+# 7.3 理解频谱图
+#==============================================================================
+安装libsndfile1系统库来读/写音频文件
+sudu apt-get install libasound1-dev
+sudu apt-get install libasound2-dev
+pip install scikits.audiolab
+		
+		import os
+		from math import floor, log
+		
+		from scikits.audiolab import Sndfile
+		import numpy as np
+		from matplotlib import pyplot as plt
+		
+		soundfile = Sndfile("test.wav")
+		
+		
+		samplerate = soundfile.samplerate
+		start_sec = 0
+		stop_sec  = 5
+		start_frame = start_sec * soundfile.samplerate
+		stop_frame  = stop_sec * soundfile.samplerate
+		
+		soundfile.seek(start_frame)
+		
+		delta_frames = stop_frame - start_frame
+		sample = soundfile.read_frames(delta_frames)
+		
+		map = 'CMRmap'
+		
+		fig = plt.figure(figsize=(10, 6), )
+		ax = fig.add_subplot(111)
+		
+		NFFT = 128
+		noverlap = 65
+		
+		pxx,  freq, t, cax = ax.specgram(sample, Fs=soundfile.samplerate,
+		                                 NFFT=NFFT, noverlap=noverlap,
+		                                 cmap=plt.get_cmap(map))
+		plt.colorbar(cax)
+		plt.xlabel("Times [sec]")
+		plt.ylabel("Frequency [Hz]")
+		
+		plt.show()
+		-----------------------------------------------
+		import numpy
+		import matplotlib.pyplot as plt
+		
+		
+		
+		def _get_mask(t, t1, t2, lvl_pos, lvl_neg):
+		    if t1 >= t2:
+		        raise ValueError("t1 must be less than t2")
+		
+		    return numpy.where(numpy.logical_and(t > t1, t < t2), lvl_pos, lvl_neg)
+		
+		
+		def generate_signal(t):
+		    sin1 = numpy.sin(2 * numpy.pi * 100 * t)
+		    sin2 = 2 * numpy.sin(2 * numpy.pi * 200 * t)
+		
+		    # add interval of high pitched signal
+		    masks = _get_mask(t, 2, 4, 1.0, 0.0) + \
+		            _get_mask(t, 14, 15, 1.0, 0.0) 
+		    sin2 = sin2 * masks
+		
+		    noise = 0.02 * numpy.random.randn(len(t))
+		    final_signal = sin1 + sin2 + noise
+		    return final_signal
+		
+		
+		if __name__ == '__main__':
+		    step = 0.001
+		    sampling_freq=1000
+		    t = numpy.arange(0.0, 20.0, step)
+		    y = generate_signal(t)
+		
+		    # we can visualize this now
+		    # in time 
+		    ax1 = plt.subplot(211)
+		    plt.plot(t, y)
+		    # and in frequency
+		    plt.subplot(212)
+		    plt.specgram(y, NFFT=1024, noverlap=900,
+		        Fs=sampling_freq, cmap=plt.cm.gist_heat)
+		    plt.show()
+
+#==============================================================================
+# 7.4 创建火柴杆图
+#==============================================================================
+		import matplotlib.pyplot as plt
+		import numpy as np 
+		x = np.linspace(0, 20, 50) 
+		y = np.sin(x + 1) + np.cos(x ** 2) 
+		bottom = -0.1 # 基线位置
+		# True,hold current axes for further plotting
+		# False,opposite. clear and use new figure/plot 
+		hold = False   #把所有当前图形放在当前坐标轴上
+		label = "delta" #设置火柴杠图图例
+		'''
+			markerline:保存了表示火柴杆本身的线条引用,仅渲染了标记,不包括连接标记的线条
+			stemlines:保存了表示stemlines原点的水平线条的引用。
+			baseline:表示茎线的集合
+		'''
+		markerline, stemlines, baseline = plt.stem(x, y, bottom=bottom,label=label, hold=hold) 
+		plt.setp(markerline, color='red', marker='o') 
+		plt.setp(stemlines, color='blue', linestyle=':')
+		plt.setp(baseline, color='grey', linewidth=2, linestyle='-')
+		# draw a legend
+		plt.legend()
+		plt.show()
+
+·
+
+
+
+#==============================================================================
+# 7.5 绘制矢量场流线图
+#==============================================================================
+		import matplotlib.pyplot as plt
+		import numpy as np
+		
+		Y, X = np.mgrid[0:5:100j, 0:5:100j]
+		U = X # np.sin(X) 
+		V = Y # np.sin(Y) 
+		from pprint import pprint
+		print "X"
+		pprint(X)
+		
+		print "Y"
+		pprint(Y) 
+		plt.streamplot(X, Y, U, V) 
+		plt.show()
+
+#==============================================================================
+# 7.6 使用颜色表
+#==============================================================================
+数据没有与红色/绿色有很强的关联时,要尽可能的避免使用这两种颜色。
+颜色表：
+	Sequential:表示同一颜色从低饱和度到高饱和度的两个色调的单色颜色表。
+	Diverging:表示中间值,是颜色的中值,然后颜色范围在高和低两个方向上变化到两个不同的色调。
+			例如中值为0,能清晰的显示负值和正值之间的区别。
+	Qualitative:对于数据没有固定的顺序,并且想要让不同种类的数据之间能轻易的区分开的情况,可选用该颜色表。
+	Cyclic:当数据可以围绕端点值显示的时候,比较方便，例如一天的时间，风向，相位角。
+
+matplotlib预定义的颜色表:autumn、bone、cool、copper、flag、gray、hot、hsv、jet、pink、prism、sprint、summer、winter、spectral
+
+Yorick科学可视化包:gist_earth、gist_heat、gist_ncar、gist_rainbow、gist_stern
+
+ColorBrewer颜色表
+	Diverging:中间亮度最高,向两端递减
+	Sequential:亮度单调地递减
+	Qualitative:不同种类的颜色用来区分不同的数据类别
+
+其他：
+	brg：表示一个发散型的蓝、红、绿颜色表
+	bwr：发散型蓝、白、红颜色表
+	seismic：发散蓝、白、红
+	coolwarm：对于3D阴影,色盲和颜色排序非常有用
+	rainbow：发散亮度的紫、蓝、绿、黄、橙、红光谱
+	terrain：地图标记的颜色(蓝、绿、黄、棕、白)  
+颜色表名_r表示反转。
+		
+		import matplotlib as mpl
+		import matplotlib.pyplot as plt
+		import numpy as np  
+		red_yellow_green = ['#d73027', '#f46d43', '#fdae61',
+		                    '#fee08b', '#ffffbf', '#d9ef8b',
+		                    '#a6d96a', '#66bd63', '#1a9850']
+		 
+		fig,ax = plt.subplots(1)
+		
+		for i in range(9):
+		    y = np.random.normal(size=1000).cumsum()
+		    x = np.arange(1000)
+		    ax.scatter(x, y, label=str(i), linewidth=0.1, edgecolors='grey', facecolor=red_yellow_green[i])
+		
+		ax.legend()
+		plt.show() 
+#==============================================================================
+# 7.7 使用散点图和直方图
+#==============================================================================
+
+		散点图
+		-----------------------------------------------------------
+		import matplotlib.pyplot as plt
+		import numpy as np
+		
+		# import the data
+		from ch07_search_data import DATA
+		data = DATA, data1 = np.random.random(365)
+		assert len(data) == len(data1)
+		
+		fig = plt.figure() 
+		ax1 = fig.add_subplot(221)
+		ax1.scatter(data, data1, alpha=0.5)
+		ax1.set_title('No correlation')
+		ax1.grid(True)
+		
+		ax2 = fig.add_subplot(222)
+		ax2.scatter(data1, data1, alpha=0.5)
+		ax2.set_title('Ideal positive correlation')
+		ax2.grid(True)
+		
+		ax3 = fig.add_subplot(223)
+		ax3.scatter(data1, data1*-1, alpha=0.5)
+		ax3.set_title('Ideal negative correlation')
+		ax3.grid(True)
+		
+		ax4 = fig.add_subplot(224)
+		ax4.scatter(data1, data1+data, alpha=0.5)
+		ax4.set_title('Non ideal positive correlation')
+		ax4.grid(True)
+		
+		plt.tight_layout() 
+		plt.show()
+	
+		直方图
+		-----------------------------------------------------------
+
+		import numpy as np
+		import matplotlib.pyplot as plt
+		from mpl_toolkits.axes_grid1 import make_axes_locatable
+		
+		
+		def scatterhist(x, y, figsize=(8,8)):
+		    """
+		    Create simple scatter & histograms of data x, y inside given plot
+		
+		    @param figsize: Figure size to create figure
+		    @type figsize: Tuple of two floats representing size in inches
+		
+		    @param x: X axis data set
+		    @type x: np.array
+		
+		    @param y: Y axis data set
+		    @type y: np.array
+		    """
+		    _, scatter_axes = plt.subplots(figsize=figsize)
+		
+		    # the scatter plot:
+		    scatter_axes.scatter(x, y, alpha=0.5)
+		    scatter_axes.set_aspect(1.)
+		
+		    divider = make_axes_locatable(scatter_axes)
+		    axes_hist_x = divider.append_axes(position="top", sharex=scatter_axes, size=1, pad=0.1)
+		    axes_hist_y = divider.append_axes(position="right", sharey=scatter_axes, size=1, pad=0.1)
+		 
+		    binwidth = 0.25# compute bins accordingly 
+		    # global max value in both data sets
+		    xymax = np.max([np.max(np.fabs(x)), np.max(np.fabs(y))])
+		    # number of bins
+		    bincap = int(xymax / binwidth) * binwidth
+		
+		    bins = np.arange(-bincap, bincap, binwidth)
+		    nx, binsx, _ = axes_hist_x.hist(x, bins=bins, histtype='stepfilled',
+		                     orientation='vertical')
+		    ny, binsy, _ = axes_hist_y.hist(y, bins=bins, histtype='stepfilled',
+		                     orientation='horizontal')
+		
+		    tickstep = 50
+		    ticksmax = np.max([np.max(nx), np.max(ny)])
+		    xyticks = np.arange(0, ticksmax + tickstep, tickstep)
+		
+		    # hide x and y ticklabels on histograms
+		    for tl in axes_hist_x.get_xticklabels():
+		        tl.set_visible(False)
+		    axes_hist_x.set_yticks(xyticks)
+		
+		    for tl in axes_hist_y.get_yticklabels():
+		        tl.set_visible(False)
+		    axes_hist_y.set_xticks(xyticks)
+		
+		    plt.show()
+		
+		
+		if __name__ == '__main__':
+		    # import the data
+		    from ch07_search_data import DATA
+		    d = DATA
+		
+		    # Now let's generate random data for the same period
+		    d1 = np.random.random(365)
+		    assert len(d) == len(d1)
+		
+		    # try with the random data
+		#     d = np.random.randn(1000)
+		#     d1 = np.random.randn(1000)
+		
+		    scatterhist(d, d1)
+
+
+
+
+
+#==============================================================================
+# 7.8 绘制两个变量之间的互相图形
+#==============================================================================
+绘两个数据集之间的相互关系
+		import matplotlib.pyplot as plt
+		import numpy as np
+		
+		# import the data
+		from ch07_search_data import DATA
+		data = DATA
+		
+		total = sum(data)
+		av = total / len(data)
+		z = [i - av for i in data]
+		av1 = sum(data1) / len(data1)
+		z1 = [i - av1 for i in data1] 
+		
+		data1 = np.random.random(365)
+		assert len(data) == len(data1) 
+		fig = plt.figure()
+		
+		ax1 = fig.add_subplot(311)
+		ax1.plot(data)
+		ax1.set_xlabel('Google Trends data for "flowers"')
+		
+		ax2 = fig.add_subplot(312)
+		ax2.plot(data1)
+		ax2.set_xlabel('Random data')
+		
+		
+		ax3 = fig.add_subplot(313)
+		ax3.set_xlabel('Cross correlation of random data')
+		ax3.xcorr(z, z1, usevlines=True, maxlags=None, normed=True, lw=2)
+		ax3.grid(True)
+		plt.ylim(-1,1) 
+		plt.tight_layout() 
+		plt.show()
+#==============================================================================
+# 7.9 自相关的重要性
+#==============================================================================
+		import matplotlib.pyplot as plt
+		import numpy as np 
+		from ch07_search_data import DATA as data 
+		 
+		total = sum(data)
+		av = total / len(data)
+		z = [i - av for i in data]
+		fig = plt.figure()
+		plt.title('Comparing autocorrelations')
+		 
+		ax1 = fig.add_subplot(221)
+		ax1.plot(data)
+		ax1.set_xlabel('Google Trends data for "flowers"')
+		 
+		ax2 = fig.add_subplot(222)
+		ax2.acorr(z, usevlines=True, maxlags=None, normed=True, lw=2)
+		ax2.grid(True)
+		ax2.set_xlabel('Autocorrelation')
+		 
+		data1 = np.random.random(365)
+		assert len(data) == len(data1)
+		
+		total = sum(data1)
+		av = total / len(data1)
+		z = [i - av for i in data1]
+		 
+		ax3 = fig.add_subplot(223)
+		ax3.plot(data1)
+		ax3.set_xlabel('Random data')
+		 
+		ax4 = fig.add_subplot(224)
+		ax4.set_xlabel('Autocorrelation of random data')
+		ax4.acorr( z, usevlines=True, maxlags=None, normed=True, lw=2)
+		ax4.grid(True)
+		
+		plt.show()
+
+#==============================================================================
+# 第八章 更多matplotlib
+# 8.2 绘制风杠barbs
+#==============================================================================
+	import matplotlib.pyplot as plt
+	import numpy as np
+	'''
+	barbcolor:风杠中除旗标颜色
+	flagcolor:风杠中旗标颜色
+	facecolor:默认,前两者将覆盖这个
+	spacing:旗标/风杠属性间的间距
+	height:箭杆到旗标或者风杠顶部的距离
+	width:旗标的宽度
+	emptybarb:定义最小值的圆圈的半径
+	'''
+	V = [0, -5, -10, -15, -30, -40, -50, -60, -100]
+	U = np.zeros(len(V))
+	 
+	y = np.ones(len(V)) 
+	x = [0, 5, 10, 15, 30, 40, 50, 60, 100] 
+	plt.barbs(x, y, U, V, length=9) 
+	plt.xticks(x)
+	plt.ylim(0.98, 1.05) 
+	plt.show()
+
+	----------------------------------------------
+	import matplotlib.pyplot as plt
+	import numpy as np
+	
+	x = np.linspace(-20, 20, 8) 
+	y = np.linspace(  0, 20, 8)
+	
+	# make 2D coordinates
+	X, Y = np.meshgrid(x, y)
+	
+	U, V = X + 25, Y - 35
+	
+	
+	# plot the barbs
+	plt.subplot(1,2,1)
+	plt.barbs(X, Y, U, V, flagcolor='green', alpha=0.75)
+	plt.grid(True, color='gray')
+	
+	# compare that with quiver / arrows 
+	plt.subplot(1,2,2)
+	plt.quiver(X, Y, U, V, facecolor='red', alpha=0.75)
+	
+	# misc settings
+	plt.grid(True, color='grey')
+	plt.show()
+
+#==============================================================================
+# 8.3 绘制箱线图
+#============================================================================== 
+		import matplotlib.pyplot as plt 
+		PROCESSES = {
+		    "A": [12, 15, 23, 24, 30, 31, 33, 36, 50, 73],
+		    "B": [6, 22, 26, 33, 35, 47, 54, 55, 62, 63],
+		    "C": [2, 3, 6, 8, 13, 14, 19, 23, 60, 69],
+		    "D": [1, 22, 36, 37, 45, 47, 48, 51, 52, 69],
+		    }
+		
+		DATA = PROCESSES.values()
+		LABELS = PROCESSES.keys()
+		
+		plt.boxplot(DATA, widths=0.3)
+		
+		# set ticklabel to process name
+		plt.gca().xaxis.set_ticklabels(LABELS)
+		
+		# some makeup (removing chartjunk)
+		for spine in plt.gca().spines.values():
+		    spine.set_visible(False)
+		
+		plt.gca().xaxis.set_ticks_position('none')
+		plt.gca().yaxis.set_ticks_position('left')
+		plt.gca().grid(axis='y', color='gray')
+		
+		# set axes labels
+		plt.ylabel("Errors observed over defined period.")
+		plt.xlabel("Process observed over defined period.")
+		
+		plt.show()
+
+#==============================================================================
+# 8.4 绘制甘特图
+#==============================================================================
+		from datetime import datetime
+		import sys
+		
+		import numpy as np
+		import matplotlib.pyplot as plt
+		import matplotlib.font_manager as font_manager
+		import matplotlib.dates as mdates
+		
+		import logging
+		
+		
+		class Gantt(object): 
+		    # from http://colorbrewer2.org/
+		    RdYlGr = ['#d73027', '#f46d43', '#fdae61',
+		              '#fee08b', '#ffffbf', '#d9ef8b',
+		              '#a6d96a', '#66bd63', '#1a9850']
+		
+		    POS_START = 1.0
+		    POS_STEP = 0.5
+		
+		    def __init__(self, tasks):
+		        self._fig = plt.figure()
+		        self._ax = self._fig.add_axes([0.1, 0.1, .75, .5]) 
+		        self.tasks = tasks[::-1] 
+		    def _format_date(self, date_string): 
+		        try:
+		            date = datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
+		        except ValueError as err:
+		            logging.error("String '{0}' can not be converted to datetime object: {1}"
+		                  .format(date_string, err))
+		            sys.exit(-1)
+		        mpl_date = mdates.date2num(date)
+		        return mpl_date
+		
+		    def _plot_bars(self): 
+		        i = 0
+		        for task in self.tasks:
+		            start = self._format_date(task['start'])
+		            end = self._format_date(task['end'])
+		            bottom = (i * Gantt.POS_STEP) + Gantt.POS_START
+		            width = end - start
+		            self._ax.barh(bottom, width, left=start, height=0.3,
+		                          align='center', label=task['label'],
+		                          color = Gantt.RdYlGr[i])
+		            i += 1
+		
+		    def _configure_yaxis(self):'''y axis''' 
+		        task_labels = [t['label'] for t in self.tasks]
+		        pos = self._positions(len(task_labels))
+		        ylocs = self._ax.set_yticks(pos)
+		        ylabels = self._ax.set_yticklabels(task_labels)
+		        plt.setp(ylabels, size='medium')
+		
+		    def _configure_xaxis(self):''''x axis'''  
+		        self._ax.xaxis_date() 
+		        # format date to ticks on every 7 days
+		        rule = mdates.rrulewrapper(mdates.DAILY, interval=7)
+		        loc = mdates.RRuleLocator(rule)
+		        formatter = mdates.DateFormatter("%d %b")
+		
+		        self._ax.xaxis.set_major_locator(loc)
+		        self._ax.xaxis.set_major_formatter(formatter)
+		        xlabels = self._ax.get_xticklabels()
+		        plt.setp(xlabels, rotation=30, fontsize=9)
+		
+		    def _configure_figure(self):
+		        self._configure_xaxis()
+		        self._configure_yaxis()
+		
+		        self._ax.grid(True, color='gray')
+		        self._set_legend()
+		        self._fig.autofmt_xdate()
+		
+		    def _set_legend(self): 
+		        font = font_manager.FontProperties(size='small')
+		        self._ax.legend(loc='upper right', prop=font)
+		
+		    def _positions(self, count): 
+		        end = count * Gantt.POS_STEP + Gantt.POS_START
+		        pos = np.arange(Gantt.POS_START, end, Gantt.POS_STEP)
+		        return pos
+		
+		    def show(self):
+		        self._plot_bars()
+		        self._configure_figure()
+		        plt.show()
+		
+		
+		if __name__ == '__main__':
+		    TEST_DATA = (
+		                 { 'label': 'Research',       'start':'2013-10-01 12:00:00', 'end': '2013-10-02 18:00:00'},  # @IgnorePep8
+		                 { 'label': 'Compilation',    'start':'2013-10-02 09:00:00', 'end': '2013-10-02 12:00:00'},  # @IgnorePep8
+		                 { 'label': 'Meeting #1',     'start':'2013-10-03 12:00:00', 'end': '2013-10-03 18:00:00'},  # @IgnorePep8
+		                 { 'label': 'Design',         'start':'2013-10-04 09:00:00', 'end': '2013-10-10 13:00:00'},  # @IgnorePep8
+		                 { 'label': 'Meeting #2',     'start':'2013-10-11 09:00:00', 'end': '2013-10-11 13:00:00'},  # @IgnorePep8
+		                 { 'label': 'Implementation', 'start':'2013-10-12 09:00:00', 'end': '2013-10-22 13:00:00'},  # @IgnorePep8
+		                 { 'label': 'Demo',           'start':'2013-10-23 09:00:00', 'end': '2013-10-23 13:00:00'},  # @IgnorePep8
+		                )
+		
+		    gantt = Gantt(TEST_DATA)
+		    gantt.show()
+
+#==============================================================================
+# 8.5 绘制误差条
+#==============================================================================
+		import matplotlib.pyplot as plt
+		import numpy as np
+		import scipy.stats as sc
+		
+		TEST_DATA = np.array([[1,2,3,2,1,2,3,4,2,3,2,1,2,3,4,4,3,2,3,2,3,2,1],
+		                      [5,6,5,4,5,6,7,7,6,7,7,2,8,7,6,5,5,6,7,7,7,6,5],
+		                      [9,8,7,8,8,7,4,6,6,5,4,3,2,2,2,3,3,4,5,5,5,6,1],
+		                      [3,2,3,2,2,2,2,3,3,3,3,4,4,4,4,5,6,6,7,8,9,8,5],
+		                      ])
+		y = np.mean(TEST_DATA, axis=1, dtype=np.float64)
+		#计算出95%的置信区间
+		ci95 = np.abs(y - 1.96 * sc.sem(TEST_DATA, axis=1))
+		
+		tries = np.arange(0, len(y), 1.0)# each set is one try
+		
+		plt.grid(True, alpha=0.5)
+		plt.gca().set_xlabel('Observation #')
+		plt.gca().set_ylabel('Mean (+- 95% CI)')
+		plt.title("Observations with corresponding 95% CI as error bar.")
+		
+		plt.bar(tries, y, align='center', alpha=0.2)
+		plt.errorbar(tries, y, yerr=ci95, fmt=None)
+		
+		plt.show()
+
+#==============================================================================
+# 8.6 使用文本和字体属性
+#==============================================================================
+			import matplotlib.pyplot as plt
+			from matplotlib.font_manager import FontProperties
+			
+			#字体类型
+			families = ['serif', 'sans-serif', 'cursive', 'fantasy', 'monospace']
+			#字体大小
+			sizes  = ['xx-small', 'x-small', 'small', 'medium', 'large',
+			         'x-large', 'xx-large']
+			#字体风格
+			styles  = ['normal', 'italic', 'oblique']
+			#字体粗细
+			weights = ['light', 'normal', 'medium', 'semibold', 'bold', 'heavy', 'black']
+			#字体的变体形式
+			variants = ['normal', 'small-caps']
+			
+			fig = plt.figure(figsize=(9,17))
+			ax = fig.add_subplot(111)
+			ax.set_xlim(0,9)
+			ax.set_ylim(0,17)
+			
+			
+			# VAR: FAMILY, SIZE
+			y = 0
+			size = sizes[0]
+			style = styles[0]
+			weight = weights[0]
+			variant = variants[0]
+			
+			for family in families:
+			    x = 0
+			    y = y + .5
+			    for size in sizes:
+			        y = y + .4
+			        sample = family + " " + size
+			        ax.text(x, y, sample,
+			                family=family,
+			                size=size,
+			                style=style,
+			                weight=weight,
+			                variant=variant)
+			        
+			# VAR: STYLE, WEIGHT
+			y = 0
+			family = families[0] 
+			size = sizes[4]
+			variant = variants[0]
+			
+			for weight in weights:
+			    x = 5
+			    y = y + .5
+			    for style in styles:
+			        y = y + .4
+			        print x, y
+			        sample = weight + " " + style
+			        ax.text(x, y, sample,
+			                family=family,
+			                size=size,
+			                style=style,
+			                weight=weight,
+			                variant=variant)
+			
+			ax.set_axis_off()
+			plt.show()
+#==============================================================================
+# 8.7 使用LaTeX渲染文本
+#==============================================================================
+		import numpy as np
+		import matplotlib.pyplot as plt
+		
+		
+		# Example data
+		t = np.arange(0.0, 1.0 + 0.01, 0.01)
+		s = np.cos(4 * np.pi * t) * np.sin(np.pi*t/4) + 2
+		
+		plt.rc('text', usetex=True)
+		plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica'], 'size':16})
+		
+		plt.plot(t, s, alpha=0.25)
+		
+		# first, the equation for 's'
+		plt.annotate(r'$\cos(4 \times \pi \times {t}) \times \sin(\pi \times \frac {t} 4) + 2$', xy=(.9,2.2), xytext=(.5, 2.6), color='red', arrowprops={'arrowstyle':'->'})
+		
+		# some math alphabet
+		plt.text(.01, 2.7, r'$\alpha, \beta, \gamma, \Gamma, \pi, \Pi, \phi, \varphi, \Phi$')
+		# some equation
+		plt.text(.01, 2.5, r'some equations $\frac{n!}{k!(n-k)!} = {n \choose k}$')
+		# more equations
+		plt.text(.01, 2.3, r'EQ1 $\lim_{x \to \infty} \exp(-x) = 0$')
+		# some ranges...
+		plt.text(.01, 2.1, r'Ranges: $( a ), [ b ], \{ c \}, | d |, \| e \|, \langle f \rangle, \lfloor g \rfloor, \lceil h \rceil$')
+		# you can multiply apples and oranges
+		plt.text(.01, 1.9, r'Text: $50 apples \times 100 oranges = lots of juice$')
+		plt.text(.01, 1.7, r'More text formatting: $50 \textrm{ apples} \times 100 \textbf{ apples} = \textit{lots of juice}$')
+		plt.text(.01, 1.5, r'Some indexing: $\beta = (\beta_1,\beta_2,\dotsc,\beta_n)$')
+		# we can also write on labels 
+		plt.xlabel(r'\textbf{time} (s)')
+		plt.ylabel(r'\textit{y values} (W)')
+		# and write titles using LaTeX
+		plt.title(r"\TeX\ is Number "
+		          r"$\displaystyle\sum_{n=1}^\infty\frac{-e^{i\pi}}{2^n}$!",
+		          fontsize=16, color='gray')
+		# Make room for the ridiculously large title.
+		plt.subplots_adjust(top=0.8)
+		
+		plt.savefig('tex_demo')
+		plt.show()
+
+#==============================================================================
+# 8.8 理解pyplot和OO API的不同
+#==============================================================================
+		
+		 import matplotlib.pyplot as plt
+		from matplotlib.path import Path
+		import matplotlib.patches as patches
+		
+		# add figure and axes
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		
+		coords = [
+		    (1., 0.),  # start position
+		    (0., 1.),
+		    (0., 2.),  # left side
+		    (1., 3.),
+		    (2., 3.),
+		    (3., 2.),  # top right corner
+		    (3., 1.),  # right side
+		    (2., 0.),
+		    (0., 0.),  # ignored
+		    ]
+		
+		line_cmds = [Path.MOVETO,
+		         Path.LINETO,
+		         Path.LINETO,
+		         Path.LINETO,
+		         Path.LINETO,
+		         Path.LINETO,
+		         Path.LINETO,
+		         Path.LINETO,
+		         Path.CLOSEPOLY,
+		         ]
+		
+		# construct path
+		path = Path(coords, line_cmds)
+		# construct path patch 
+		patch = patches.PathPatch(path, lw=1,
+		                          facecolor='#A1D99B', edgecolor='#31A354')
+		# add it to *ax* axes
+		ax.add_patch(patch)
+		
+		ax.text(1.1, 1.4, 'Python', fontsize=24)
+		ax.set_xlim(-1, 4)
+		ax.set_ylim(-1, 4)
+		plt.show()
